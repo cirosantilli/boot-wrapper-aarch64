@@ -49,7 +49,6 @@ _start:
 	str	w0, [x1], #4
 
 2:	ldr	x1, =GIC_CPU_BASE		// GICC_CTLR
-	ldr	w0, [x1]
 	mov	w0, #3				// EnableGrp0 | EnableGrp1
 	str	w0, [x1]
 
