@@ -43,10 +43,10 @@ _start:
 
 1:	ldr	x1, =GIC_DIST_BASE + 0x80	// GICD_IGROUPR
 	mov	w0, #~0				// Grp1 interrupts
-	str	w0, [x1], #4
+	str	w0, [x1]
 	b.ne	2f				// Only local interrupts for secondary CPUs
-	str	w0, [x1], #4
-	str	w0, [x1], #4
+	str	w0, [x1, #4]
+	str	w0, [x1, #8]
 
 2:	ldr	x1, =GIC_CPU_BASE		// GICC_CTLR
 	mov	w0, #3				// EnableGrp0 | EnableGrp1
