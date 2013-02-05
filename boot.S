@@ -7,6 +7,8 @@
  * found in the LICENSE.txt file.
  */
 
+#include "common.S"
+
 	.text
 
 	.globl	_start
@@ -61,10 +63,8 @@ _start:
 	 * Prepare the switch to the EL2_SP1 mode from EL3
 	 */
 	ldr	x0, =start_ns			// Return after mode switch
-	mov	x1, #0x3c9			// EL2_SP1 | D | A | I | F
-	msr	elr_el3, x0
-	msr	spsr_el3, x1
-	eret
+	mov	x1, #SPSR_KERNEL
+	drop_el	x1, x0
 
 start_ns:
 	/*
