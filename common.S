@@ -7,6 +7,8 @@
  * found in the LICENSE.txt file.
  */
 
+#define	CURRENTEL_EL3	(3 << 2)
+
 #define SPSR_A		(1 << 8)	/* System Error masked */
 #define SPSR_D		(1 << 9)	/* Debug masked */
 #define SPSR_I		(1 << 7)	/* IRQ masked */

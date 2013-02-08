@@ -17,7 +17,7 @@ _start:
 	 * EL3 initialisation
 	 */
 	mrs	x0, CurrentEL
-	cmp	x0, #0xc			// EL3?
+	cmp	x0, #CURRENTEL_EL3
 	b.ne	start_ns			// skip EL3 initialisation
 
 	mov	x0, #0x30			// RES1
