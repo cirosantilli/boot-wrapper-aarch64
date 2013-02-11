@@ -12,6 +12,7 @@ OUTPUT_ARCH(aarch64)
 TARGET(binary)
 
 INPUT(./boot.o)
+INPUT(./ns.o)
 INPUT(KERNEL)
 INPUT(./fdt.dtb)
 
@@ -23,6 +24,7 @@ SECTIONS
 {
 	. = PHYS_OFFSET;
 	.text : { boot.o }
+	.text : { ns.o }
 	. = PHYS_OFFSET + MBOX_OFFSET;
 	mbox = .;
 	.mbox : { QUAD(0x0) }
