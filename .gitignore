@@ -1,4 +1,8 @@
-linux-system.axf
+*.axf
+*.cpio.gz
+*.dts
+*.dtsi
+*.o
 Image
+dtc
 model.lds
-boot.o
