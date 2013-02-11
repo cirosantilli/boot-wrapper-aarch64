@@ -13,8 +13,10 @@ SYSREGS_BASE	:= 0x1c010000
 GIC_DIST_BASE	:= 0x2c001000
 GIC_CPU_BASE	:= 0x2c002000
 CNTFRQ		:= 0x01800000	# 24Mhz
+CPU_IDS		?= 0x0,0x1,0x2,0x3
 
 DEFINES		+= -DCNTFRQ=$(CNTFRQ)
+DEFINES		+= -DCPU_IDS=$(CPU_IDS)
 DEFINES		+= -DGIC_CPU_BASE=$(GIC_CPU_BASE)
 DEFINES		+= -DGIC_DIST_BASE=$(GIC_DIST_BASE)
 DEFINES		+= -DSYSREGS_BASE=$(SYSREGS_BASE)
@@ -24,7 +26,7 @@ DEFINES		+= -DUART_BASE=$(UART_BASE)
 CPPFLAGS	+= $(INITRD_FLAGS)
 
 BOOTLOADER	:= boot.S
-BOOTMETHOD	:= spin.o
+BOOTMETHOD	:= psci.o
 MBOX_OFFSET	:= 0xfff8
 KERNEL		:= Image
 KERNEL_OFFSET	:= 0x80000
@@ -66,9 +68,9 @@ DTC		:= $(if $(wildcard ./dtc), ./dtc, $(shell which dtc))
 all: $(IMAGE)
 
 clean:
-	rm -f $(IMAGE) boot.o cache.o gic.o ns.o $(BOOTMETHOD) model.lds fdt.dtb
+	rm -f $(IMAGE) boot.o cache.o gic.o mmu.o ns.o $(BOOTMETHOD) model.lds fdt.dtb
 
-$(IMAGE): boot.o cache.o gic.o ns.o $(BOOTMETHOD) model.lds fdt.dtb $(KERNEL) $(FILESYSTEM)
+$(IMAGE): boot.o cache.o gic.o mmu.o ns.o $(BOOTMETHOD) model.lds fdt.dtb $(KERNEL) $(FILESYSTEM)
 	$(LD) -o $@ --script=model.lds
 
 %.o: %.S Makefile

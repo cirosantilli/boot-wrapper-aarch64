@@ -14,6 +14,7 @@ TARGET(binary)
 INPUT(./boot.o)
 INPUT(./cache.o)
 INPUT(./gic.o)
+INPUT(./mmu.o)
 INPUT(./ns.o)
 INPUT(./BOOTMETHOD)
 INPUT(KERNEL)
@@ -29,6 +30,7 @@ SECTIONS
 	.text : { boot.o }
 	.text : { cache.o }
 	.text : { gic.o }
+	.text : { mmu.o }
 	.text : { ns.o }
 	.text : { BOOTMETHOD }
 	. = PHYS_OFFSET + MBOX_OFFSET;
