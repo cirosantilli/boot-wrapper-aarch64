@@ -24,6 +24,7 @@ DEFINES		+= -DUART_BASE=$(UART_BASE)
 CPPFLAGS	+= $(INITRD_FLAGS)
 
 BOOTLOADER	:= boot.S
+BOOTMETHOD	:= spin.o
 MBOX_OFFSET	:= 0xfff8
 KERNEL		:= Image
 KERNEL_OFFSET	:= 0x80000
@@ -65,16 +66,16 @@ DTC		:= $(if $(wildcard ./dtc), ./dtc, $(shell which dtc))
 all: $(IMAGE)
 
 clean:
-	rm -f $(IMAGE) boot.o gic.o ns.o model.lds fdt.dtb
+	rm -f $(IMAGE) boot.o gic.o ns.o $(BOOTMETHOD) model.lds fdt.dtb
 
-$(IMAGE): boot.o gic.o ns.o model.lds fdt.dtb $(KERNEL) $(FILESYSTEM)
+$(IMAGE): boot.o gic.o ns.o $(BOOTMETHOD) model.lds fdt.dtb $(KERNEL) $(FILESYSTEM)
 	$(LD) -o $@ --script=model.lds
 
 %.o: %.S Makefile
 	$(CC) $(CPPFLAGS) $(DEFINES) -c -o $@ $<
 
 model.lds: $(LD_SCRIPT) Makefile
-	$(CC) $(CPPFLAGS) -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) -DKERNEL=$(KERNEL) -DFILESYSTEM=$(FILESYSTEM) -E -P -C -o $@ $<
+	$(CC) $(CPPFLAGS) -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) -DKERNEL=$(KERNEL) -DFILESYSTEM=$(FILESYSTEM) -DBOOTMETHOD=$(BOOTMETHOD) -E -P -C -o $@ $<
 
 ifeq ($(DTC),)
 	$(error No dtc found! You can git clone from git://git.jdl.com/software/dtc.git)

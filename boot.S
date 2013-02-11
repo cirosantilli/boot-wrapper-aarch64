@@ -18,7 +18,7 @@ _start:
 	 */
 	mrs	x0, CurrentEL
 	cmp	x0, #CURRENTEL_EL3
-	b.ne	start_ns			// skip EL3 initialisation
+	b.ne	start_no_el3			// skip EL3 initialisation
 
 	mov	x0, #0x30			// RES1
 	orr	x0, x0, #(1 << 0)		// Non-secure EL1
@@ -35,44 +35,8 @@ _start:
 
 	msr	sctlr_el2, xzr
 
-	/*
-	 * Prepare the switch to the EL2_SP1 mode from EL3
-	 */
-	ldr	x0, =start_ns			// Return after mode switch
-	mov	x1, #SPSR_KERNEL
-	drop_el	x1, x0
-
-start_ns:
-	/*
-	 * Kernel parameters
-	 */
-	mov	x0, xzr
-	mov	x1, xzr
-	mov	x2, xzr
-	mov	x3, xzr
-
-	mrs	x4, mpidr_el1
-	ldr	x5, =MPIDR_ID_BITS
-	tst	x4, x5
-	b.eq	2f
-
-	/*
-	 * Secondary CPUs
-	 */
-1:	wfe
-	ldr	x4, mbox
-	cbz	x4, 1b
-	br	x4				// branch to the given address
-
-2:
-
-	/*
-	 * Primary CPU
-	 */
-	bl	ns_init_system
-	ldr	x0, =dtb			// device tree blob
-	b	kernel
+	b	start_el3
 
 	.ltorg
 
-	.org	0x200
+	.org	0x100

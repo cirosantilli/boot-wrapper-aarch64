@@ -14,6 +14,7 @@ TARGET(binary)
 INPUT(./boot.o)
 INPUT(./gic.o)
 INPUT(./ns.o)
+INPUT(./BOOTMETHOD)
 INPUT(KERNEL)
 INPUT(./fdt.dtb)
 
@@ -27,6 +28,7 @@ SECTIONS
 	.text : { boot.o }
 	.text : { gic.o }
 	.text : { ns.o }
+	.text : { BOOTMETHOD }
 	. = PHYS_OFFSET + MBOX_OFFSET;
 	mbox = .;
 	.mbox : { QUAD(0x0) }
