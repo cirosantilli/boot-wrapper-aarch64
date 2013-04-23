@@ -66,9 +66,9 @@ DTC		:= $(if $(wildcard ./dtc), ./dtc, $(shell which dtc))
 all: $(IMAGE)
 
 clean:
-	rm -f $(IMAGE) boot.o gic.o ns.o $(BOOTMETHOD) model.lds fdt.dtb
+	rm -f $(IMAGE) boot.o cache.o gic.o ns.o $(BOOTMETHOD) model.lds fdt.dtb
 
-$(IMAGE): boot.o gic.o ns.o $(BOOTMETHOD) model.lds fdt.dtb $(KERNEL) $(FILESYSTEM)
+$(IMAGE): boot.o cache.o gic.o ns.o $(BOOTMETHOD) model.lds fdt.dtb $(KERNEL) $(FILESYSTEM)
 	$(LD) -o $@ --script=model.lds
 
 %.o: %.S Makefile

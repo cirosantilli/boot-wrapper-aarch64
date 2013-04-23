@@ -12,6 +12,7 @@ OUTPUT_ARCH(aarch64)
 TARGET(binary)
 
 INPUT(./boot.o)
+INPUT(./cache.o)
 INPUT(./gic.o)
 INPUT(./ns.o)
 INPUT(./BOOTMETHOD)
@@ -26,6 +27,7 @@ SECTIONS
 {
 	. = PHYS_OFFSET;
 	.text : { boot.o }
+	.text : { cache.o }
 	.text : { gic.o }
 	.text : { ns.o }
 	.text : { BOOTMETHOD }
