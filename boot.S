@@ -31,32 +31,7 @@ _start:
 	ldr	x0, =CNTFRQ
 	msr	cntfrq_el0, x0
 
-	/*
-	 * Check for the primary CPU to avoid a race on the distributor
-	 * registers.
-	 */
-	mrs	x0, mpidr_el1
-	ldr	x1, =MPIDR_ID_BITS
-	tst	x0, x1
-	b.ne	1f				// secondary CPU
-
-	ldr	x1, =GIC_DIST_BASE		// GICD_CTLR
-	mov	w0, #3				// EnableGrp0 | EnableGrp1
-	str	w0, [x1]
-
-1:	ldr	x1, =GIC_DIST_BASE + 0x80	// GICD_IGROUPR
-	mov	w0, #~0				// Grp1 interrupts
-	str	w0, [x1]
-	b.ne	2f				// Only local interrupts for secondary CPUs
-	str	w0, [x1, #4]
-	str	w0, [x1, #8]
-
-2:	ldr	x1, =GIC_CPU_BASE		// GICC_CTLR
-	mov	w0, #3				// EnableGrp0 | EnableGrp1
-	str	w0, [x1]
-
-	mov	w0, #1 << 7			// allow NS access to GICC_PMR
-	str	w0, [x1, #4]			// GICC_PMR
+	bl	gic_secure_init
 
 	msr	sctlr_el2, xzr
 
