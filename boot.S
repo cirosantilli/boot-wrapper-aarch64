@@ -36,7 +36,8 @@ _start:
 	 * registers.
 	 */
 	mrs	x0, mpidr_el1
-	tst	x0, #15
+	ldr	x1, =MPIDR_ID_BITS
+	tst	x0, x1
 	b.ne	1f				// secondary CPU
 
 	ldr	x1, =GIC_DIST_BASE		// GICD_CTLR
@@ -76,7 +77,8 @@ start_ns:
 	mov	x3, xzr
 
 	mrs	x4, mpidr_el1
-	tst	x4, #15
+	ldr	x5, =MPIDR_ID_BITS
+	tst	x4, x5
 	b.eq	2f
 
 	/*

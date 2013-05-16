@@ -7,6 +7,8 @@
  * found in the LICENSE.txt file.
  */
 
+#define MPIDR_ID_BITS	(0xff00ffffff)
+
 #define	CURRENTEL_EL3	(3 << 2)
 
 #define SPSR_A		(1 << 8)	/* System Error masked */
