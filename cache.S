@@ -15,7 +15,7 @@ flush_caches:
 
 	/* find what out the max cache level to flush */
 	lsr	x1, x0, #24
-	and	x1, x0, #(0x7)
+	and	x1, x1, #(0x7)
 	cbz	x1, dcaches_done
 
 	mov	x2, #0			/* level 1 (represented 1-off) */
