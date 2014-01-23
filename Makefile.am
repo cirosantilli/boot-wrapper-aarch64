@@ -32,9 +32,14 @@ PSCI_NODE	:= psci {				\
 			cpu_on = <0x84000002>;		\
 			cpu_off = <0x84000001>;		\
 		   };
+CPU_NODES	:= $(shell $(top_srcdir)/gen-cpu-nodes.sh $(CPU_IDS))
+CPUS_NODE	:= cpus {		\
+			$(CPU_NODES)	\
+		   };
 else
 BOOTMETHOD	:= spin.o
 PSCI_NODE	:=
+CPUS_NODE	:=
 endif
 
 MBOX_OFFSET	:= 0xfff8
@@ -78,8 +83,8 @@ $(IMAGE): boot.o cache.o gic.o mmu.o ns.o $(BOOTMETHOD) model.lds fdt.dtb $(KERN
 model.lds: $(LD_SCRIPT) Makefile
 	$(CPP) $(CPPFLAGS) -ansi -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) -DKERNEL=$(KERNEL_IMAGE) -DFILESYSTEM=$(FILESYSTEM) -DBOOTMETHOD=$(BOOTMETHOD) -P -C -o $@ $<
 
-fdt.dtb: $(KERNEL_DTB) Makefile
-	( $(DTC) -O dts -I dtb $(KERNEL_DTB) ; echo "/ { $(CHOSEN_NODE) $(PSCI_NODE) };" ) | $(DTC) -O dtb -o $@ -
+fdt.dtb: $(KERNEL_DTB) Makefile gen-cpu-nodes.sh
+	( $(DTC) -O dts -I dtb $(KERNEL_DTB) ; echo "/ { $(CHOSEN_NODE) $(PSCI_NODE) $(CPUS_NODE) };" ) | $(DTC) -O dtb -o $@ -
 
 # The filesystem archive might not exist if INITRD is not being used
 .PHONY: all clean $(FILESYSTEM)
