@@ -35,6 +35,15 @@ m4_foreach([checkfile], [CHECKFILES],
 AC_SUBST([KERNEL_IMAGE], [$KERN_DIR$KERN_IMAGE])
 AC_SUBST([KERNEL_DTB], [$KERN_DIR$KERN_DTB])
 
+# Allow a user to pass --enable-psci
+USE_PSCI=no
+AC_ARG_ENABLE([psci],
+	AS_HELP_STRING([--enable-psci], [enable the psci boot method]),
+	[USE_PSCI=yes],
+	[USE_PSCI=no])
+AM_CONDITIONAL([PSCI], [test "x$USE_PSCI" = "xyes"])
+
+
 # Allow a user to pass --with-initrd
 AC_ARG_WITH([initrd],
 	AS_HELP_STRING([--with-initrd], [embed an initrd in the kernel image]),
@@ -72,4 +81,5 @@ echo ""
 echo "  Linux kernel build dir:            ${KERN_DIR}"
 echo "  Linux kernel command line:         ${CMDLINE}"
 echo "  Embedded initrd:                   ${FILESYSTEM:-NONE}"
+echo "  Use PSCI?                          ${USE_PSCI}"
 echo ""
