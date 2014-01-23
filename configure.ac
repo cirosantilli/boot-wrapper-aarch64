@@ -63,7 +63,7 @@ AC_PROG_CPP
 AM_PROG_AS
 AC_PROG_SED
 AC_PROG_LN_S
-AC_PATH_PROG([DTC], dtc, error)
+AC_PATH_PROG([DTC], dtc, error, [$PATH$PATH_SEPARATOR$KERN_DIR/scripts/dtc])
 if test "x$DTC" = "xerror"; then
 	AC_MSG_ERROR([cannot find the device tree compiler (dtc)])
 fi
