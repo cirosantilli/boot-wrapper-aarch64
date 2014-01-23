@@ -26,8 +26,15 @@ BOOTLOADER	:= boot.S
 
 if PSCI
 BOOTMETHOD	:= psci.o
+PSCI_NODE	:= psci {				\
+			compatible = \"arm,psci\";	\
+			method = \"smc\";		\
+			cpu_on = <0x84000002>;		\
+			cpu_off = <0x84000001>;		\
+		   };
 else
 BOOTMETHOD	:= spin.o
+PSCI_NODE	:=
 endif
 
 MBOX_OFFSET	:= 0xfff8
@@ -72,7 +79,7 @@ model.lds: $(LD_SCRIPT) Makefile
 	$(CPP) $(CPPFLAGS) -ansi -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) -DKERNEL=$(KERNEL_IMAGE) -DFILESYSTEM=$(FILESYSTEM) -DBOOTMETHOD=$(BOOTMETHOD) -P -C -o $@ $<
 
 fdt.dtb: $(KERNEL_DTB) Makefile
-	( $(DTC) -O dts -I dtb $(KERNEL_DTB) ; echo "/ { $(CHOSEN_NODE) };" ) | $(DTC) -O dtb -o $@ -
+	( $(DTC) -O dts -I dtb $(KERNEL_DTB) ; echo "/ { $(CHOSEN_NODE) $(PSCI_NODE) };" ) | $(DTC) -O dtb -o $@ -
 
 # The filesystem archive might not exist if INITRD is not being used
 .PHONY: all clean $(FILESYSTEM)
