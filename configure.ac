@@ -43,6 +43,12 @@ AC_ARG_ENABLE([psci],
 	[USE_PSCI=no])
 AM_CONDITIONAL([PSCI], [test "x$USE_PSCI" = "xyes"])
 
+# Allow a user to pass --with-cpu-ids
+C_CPU_IDS="0x0,0x1,0x2,0x3"
+AC_ARG_WITH(cpu-ids,
+	AS_HELP_STRING([--with-cpu-ids], [Specify a comma seperated list of CPU IDs]),
+	[C_CPU_IDS="$withval"])
+AC_SUBST([CPU_IDS], [$C_CPU_IDS])
 
 # Allow a user to pass --with-initrd
 AC_ARG_WITH([initrd],
@@ -82,4 +88,5 @@ echo "  Linux kernel build dir:            ${KERN_DIR}"
 echo "  Linux kernel command line:         ${CMDLINE}"
 echo "  Embedded initrd:                   ${FILESYSTEM:-NONE}"
 echo "  Use PSCI?                          ${USE_PSCI}"
+echo "  CPU IDs:                           ${CPU_IDS}"
 echo ""
