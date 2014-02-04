@@ -74,7 +74,7 @@ $(IMAGE): boot.o cache.o gic.o mmu.o ns.o $(BOOTMETHOD) model.lds fdt.dtb $(KERN
 	$(LD) -o $@ --script=model.lds
 
 %.o: %.S Makefile
-	$(CC) $(CPPFLAGS) $(DEFINES) -c -o $@ $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(DEFINES) -c -o $@ $<
 
 model.lds: $(LD_SCRIPT) Makefile
 	$(CC) $(CPPFLAGS) -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) -DKERNEL=$(KERNEL) -DFILESYSTEM=$(FILESYSTEM) -DBOOTMETHOD=$(BOOTMETHOD) -E -P -C -o $@ $<
