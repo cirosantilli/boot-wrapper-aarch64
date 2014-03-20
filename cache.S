@@ -37,8 +37,8 @@ flush_caches:
 	mrs	x3, ccsidr_el1
 	and	x4, x3, #0x7
 	add	x4, x4, #4		/* log2 line size, corrected for offset */
-	ubfx	x6, x3, #3, #10		/* ways */
-	clz	w5, w6			/* log2 ways, rounded down */
+	ubfx	x6, x3, #3, #10		/* max way index */
+	clz	w5, w6			/* 32 - log2 ways */
 	ubfx	x7, x3, #13, #15	/* sets */
 
 	/* loop over ways */
