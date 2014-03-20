@@ -47,9 +47,9 @@ flush_caches:
 	/* loop over sets */
 	/* build the set/way command */
 3:	lsl	x9, x2, #1		/* cache level (-1) */
-	lsl	x10, x8, x5		/* way << shift */
+	lsl	x10, x6, x5		/* way << shift */
 	orr	x9, x9, x10
-	lsl	x10, x6, x4		/* set << line size */
+	lsl	x10, x8, x4		/* set << line size */
 	orr	x9, x9, x10
 
 	dc	cisw, x9
