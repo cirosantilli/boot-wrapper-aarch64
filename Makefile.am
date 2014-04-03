@@ -88,3 +88,6 @@ fdt.dtb: $(KERNEL_DTB) Makefile gen-cpu-nodes.sh
 
 # The filesystem archive might not exist if INITRD is not being used
 .PHONY: all clean $(FILESYSTEM)
+
+MAINTAINERCLEANFILES = aclocal.m4 compile config.* configure install-sh \
+	Makefile.in missing
