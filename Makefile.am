@@ -8,7 +8,7 @@
 # found in the LICENSE.txt file.
 
 # VE
-PHYS_OFFSET	:= 0x80000000
+PHYS_OFFSET	:= $(shell $(top_srcdir)/findmem.pl $(KERNEL_DTB))
 UART_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,pl011')
 SYSREGS_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,vexpress-sysreg')
 GIC_DIST_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,cortex-a15-gic')
