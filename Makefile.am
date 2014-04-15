@@ -9,10 +9,10 @@
 
 # VE
 PHYS_OFFSET	:= 0x80000000
-UART_BASE	:= 0x1c090000
-SYSREGS_BASE	:= 0x1c010000
-GIC_DIST_BASE	:= 0x2c001000
-GIC_CPU_BASE	:= 0x2c002000
+UART_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,pl011')
+SYSREGS_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,vexpress-sysreg')
+GIC_DIST_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,cortex-a15-gic')
+GIC_CPU_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 1 'arm,cortex-a15-gic')
 CNTFRQ		:= 0x01800000	# 24Mhz
 
 DEFINES		= -DCNTFRQ=$(CNTFRQ)
