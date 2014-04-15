@@ -21,19 +21,24 @@ AC_ARG_WITH([kernel-dir],
 	AS_HELP_STRING([--with-kernel-dir], [specify the root Linux kernel build directory (required)]),
 	AC_SUBST([KERN_DIR], [$withval]),
 	AC_MSG_ERROR([No kernel directory specified. Use --with-kernel-dir]))
-KERN_IMAGE=/arch/arm64/boot/Image
-KERN_DTB=/arch/arm64/boot/dts/rtsm_ve-aemv8a.dtb
+KERN_IMAGE=$KERN_DIR/arch/arm64/boot/Image
+KERN_DTB=$KERN_DIR/arch/arm64/boot/dts/rtsm_ve-aemv8a.dtb
+
+# Allow the user to override the default DTB
+AC_ARG_WITH([dtb],
+	AS_HELP_STRING([--with-dtb], [Specify a particular DTB to use]),
+	[KERN_DTB="$withval"])
 
 # Ensure that the user has provided us with a sane kernel dir.
 m4_define([CHECKFILES], [KERN_DIR,
-	KERN_DIR$KERN_DTB,
-	KERN_DIR$KERN_IMAGE])
+	KERN_DTB,
+	KERN_IMAGE])
 
 m4_foreach([checkfile], [CHECKFILES],
 	[AC_CHECK_FILE([$checkfile], [], AC_MSG_ERROR([No such file or directory: $checkfile]))])
 
-AC_SUBST([KERNEL_IMAGE], [$KERN_DIR$KERN_IMAGE])
-AC_SUBST([KERNEL_DTB], [$KERN_DIR$KERN_DTB])
+AC_SUBST([KERNEL_IMAGE], [$KERN_IMAGE])
+AC_SUBST([KERNEL_DTB], [$KERN_DTB])
 
 # Allow a user to pass --enable-psci
 USE_PSCI=no
@@ -85,6 +90,7 @@ echo "  Boot wrapper configuration"
 echo "  =========================="
 echo ""
 echo "  Linux kernel build dir:            ${KERN_DIR}"
+echo "  Device tree blob:                  ${KERN_DTB}"
 echo "  Linux kernel command line:         ${CMDLINE}"
 echo "  Embedded initrd:                   ${FILESYSTEM:-NONE}"
 echo "  Use PSCI?                          ${USE_PSCI}"
