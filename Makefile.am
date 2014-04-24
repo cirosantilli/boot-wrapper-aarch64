@@ -11,14 +11,10 @@
 PHYS_OFFSET	:= $(shell $(top_srcdir)/findmem.pl $(KERNEL_DTB))
 UART_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,pl011')
 SYSREGS_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,vexpress-sysreg')
-GIC_DIST_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,cortex-a15-gic')
-GIC_CPU_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 1 'arm,cortex-a15-gic')
 CNTFRQ		:= 0x01800000	# 24Mhz
 
 DEFINES		= -DCNTFRQ=$(CNTFRQ)
 DEFINES		+= -DCPU_IDS=$(CPU_IDS)
-DEFINES		+= -DGIC_CPU_BASE=$(GIC_CPU_BASE)
-DEFINES		+= -DGIC_DIST_BASE=$(GIC_DIST_BASE)
 DEFINES		+= -DSYSREGS_BASE=$(SYSREGS_BASE)
 DEFINES		+= -DUART_BASE=$(UART_BASE)
 
@@ -40,6 +36,20 @@ else
 BOOTMETHOD	:= spin.o
 PSCI_NODE	:=
 CPUS_NODE	:=
+endif
+
+if GICV3
+GIC_DIST_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,gic-v3')
+GIC_RDIST_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 1 'arm,gic-v3')
+DEFINES		+= -DGIC_DIST_BASE=$(GIC_DIST_BASE)
+DEFINES		+= -DGIC_RDIST_BASE=$(GIC_RDIST_BASE)
+GIC		:= gic-v3.o
+else
+GIC_DIST_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,cortex-a15-gic')
+GIC_CPU_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 1 'arm,cortex-a15-gic')
+DEFINES		+= -DGIC_CPU_BASE=$(GIC_CPU_BASE)
+DEFINES		+= -DGIC_DIST_BASE=$(GIC_DIST_BASE)
+GIC		:= gic.o
 endif
 
 MBOX_OFFSET	:= 0xfff8
@@ -72,16 +82,16 @@ CPPFLAGS	+= $(INITRD_FLAGS)
 
 all: $(IMAGE)
 
-CLEANFILES = $(IMAGE) boot.o cache.o gic.o mmu.o ns.o $(BOOTMETHOD) model.lds fdt.dtb
+CLEANFILES = $(IMAGE) boot.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD) model.lds fdt.dtb
 
-$(IMAGE): boot.o cache.o gic.o mmu.o ns.o $(BOOTMETHOD) model.lds fdt.dtb $(KERNEL_IMAGE) $(FILESYSTEM)
+$(IMAGE): boot.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD) model.lds fdt.dtb $(KERNEL_IMAGE) $(FILESYSTEM)
 	$(LD) -o $@ --script=model.lds
 
 %.o: %.S Makefile
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(DEFINES) -c -o $@ $<
 
 model.lds: $(LD_SCRIPT) Makefile
-	$(CPP) $(CPPFLAGS) -ansi -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) -DKERNEL=$(KERNEL_IMAGE) -DFILESYSTEM=$(FILESYSTEM) -DBOOTMETHOD=$(BOOTMETHOD) -P -C -o $@ $<
+	$(CPP) $(CPPFLAGS) -ansi -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) -DKERNEL=$(KERNEL_IMAGE) -DFILESYSTEM=$(FILESYSTEM) -DBOOTMETHOD=$(BOOTMETHOD) -DGIC=$(GIC) -P -C -o $@ $<
 
 fdt.dtb: $(KERNEL_DTB) Makefile gen-cpu-nodes.sh
 	( $(DTC) -O dts -I dtb $(KERNEL_DTB) ; echo "/ { $(CHOSEN_NODE) $(PSCI_NODE) $(CPUS_NODE) };" ) | $(DTC) -O dtb -o $@ -

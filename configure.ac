@@ -68,6 +68,14 @@ AC_ARG_WITH([cmdline],
 	[C_CMDLINE=$withval])
 AC_SUBST([CMDLINE], [$C_CMDLINE])
 
+# Allow a user to pass --enable-gicv3
+USE_GICV3=no
+AC_ARG_ENABLE([gicv3],
+	AS_HELP_STRING([--enable-gicv3], [enable GICv3 instead of GICv2]),
+	[USE_GICV3=yes],
+	[USE_GICV3=no])
+AM_CONDITIONAL([GICV3], [test "x$USE_GICV3" = "xyes"])
+
 # Ensure that we have all the needed programs
 AC_PROG_CC
 AC_PROG_CPP
@@ -95,4 +103,5 @@ echo "  Linux kernel command line:         ${CMDLINE}"
 echo "  Embedded initrd:                   ${FILESYSTEM:-NONE}"
 echo "  Use PSCI?                          ${USE_PSCI}"
 echo "  CPU IDs:                           ${CPU_IDS}"
+echo "  Use GICv3?                         ${USE_GICV3}"
 echo ""
