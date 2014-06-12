@@ -8,9 +8,9 @@
 # found in the LICENSE.txt file.
 
 # VE
-PHYS_OFFSET	:= $(shell $(top_srcdir)/findmem.pl $(KERNEL_DTB))
-UART_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,pl011')
-SYSREGS_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,vexpress-sysreg')
+PHYS_OFFSET	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findmem.pl $(KERNEL_DTB))
+UART_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,pl011')
+SYSREGS_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,vexpress-sysreg')
 CNTFRQ		:= 0x01800000	# 24Mhz
 
 DEFINES		= -DCNTFRQ=$(CNTFRQ)
@@ -39,14 +39,14 @@ CPUS_NODE	:=
 endif
 
 if GICV3
-GIC_DIST_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,gic-v3')
-GIC_RDIST_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 1 'arm,gic-v3')
+GIC_DIST_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,gic-v3')
+GIC_RDIST_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DTB) 1 'arm,gic-v3')
 DEFINES		+= -DGIC_DIST_BASE=$(GIC_DIST_BASE)
 DEFINES		+= -DGIC_RDIST_BASE=$(GIC_RDIST_BASE)
 GIC		:= gic-v3.o
 else
-GIC_DIST_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,cortex-a15-gic')
-GIC_CPU_BASE	:= $(shell $(top_srcdir)/findbase.pl $(KERNEL_DTB) 1 'arm,cortex-a15-gic')
+GIC_DIST_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,cortex-a15-gic')
+GIC_CPU_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DTB) 1 'arm,cortex-a15-gic')
 DEFINES		+= -DGIC_CPU_BASE=$(GIC_CPU_BASE)
 DEFINES		+= -DGIC_DIST_BASE=$(GIC_DIST_BASE)
 GIC		:= gic.o
