@@ -8,6 +8,8 @@
  */
 
 #define PL011_UARTIBRD	0x24
+#define PL011_UARTFBRD	0x28
+#define PL011_UART_LCR_H	0x2c
 #define PL011_UARTCR	0x30
 
 #define V2M_SYS_CFGDATA	0xa0
@@ -23,8 +25,12 @@ ns_init_system:
 	ldr	x4, =UART_BASE
 	mov	w5, #0x10
 	str	w5, [x4, #PL011_UARTIBRD]
-	mov	w5, #0xc300
-	orr	w5, w5, #0x0001	
+	str	wzr, [x4, #PL011_UARTFBRD]
+	/* set parameters to 8N1 and enable the FIFOs */
+	mov	w5, #0x70
+	str	w5, [x4, #PL011_UART_LCR_H]
+	/* enable the UART, TXen and RXen */
+	mov	w5, #0x301
 	str	w5, [x4, #PL011_UARTCR]
 
 	/*
@@ -38,4 +44,4 @@ ns_init_system:
 	ret
 
 	.ltorg
-	.org 0x40
+	.org 0x80
