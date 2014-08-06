@@ -15,6 +15,16 @@
 
 gic_secure_init:
 	/*
+	 * If GICv3 is not available, skip initialisation. The OS will probably
+	 * fail with a warning, but this should be easier to debug than a
+	 * failure within the boot wrapper.
+	 */
+	mrs	x0, id_aa64pfr0_el1
+	ubfx	x0, x0, #24, #4
+	cmp	x0, #1
+	b.ne	skip_gicv3
+
+	/*
 	 * Only the primary CPU setups the (re)distributors.
 	 */
 	mrs	x0, mpidr_el1
@@ -86,4 +96,5 @@ setup_cpu_if:
 	msr	ICC_CTLR_EL3, xzr
 	isb
 
+skip_gicv3:
 	ret
