@@ -33,8 +33,6 @@ _start:
 
 	bl	gic_secure_init
 
-	msr	sctlr_el2, xzr
-
 	b	start_el3
 
 	.ltorg

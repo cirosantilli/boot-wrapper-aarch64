@@ -18,6 +18,8 @@ start_el3:
 	/*
 	 * Prepare the switch to the EL2_SP1 mode from EL3
 	 */
+	ldr	x0, =SCTLR_EL2_RESET
+	msr	sctlr_el2, x0
 	ldr	x0, =start_no_el3		// Return after mode switch
 	mov	x1, #SPSR_KERNEL
 	drop_el	x1, x0

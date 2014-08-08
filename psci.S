@@ -220,6 +220,9 @@ spin:
 	cmp	x2, x3
 	b.eq	1b
 
+	ldr	x0, =SCTLR_EL2_RESET
+	msr	sctlr_el2, x0
+
 	mov	x3, #SPSR_KERNEL
 	adr	x4, el2_trampoline
 	mov	x0, x2

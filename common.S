@@ -11,6 +11,12 @@
 
 #define	CURRENTEL_EL3	(3 << 2)
 
+/*
+ * RES1 bits,  little-endian, caches and MMU off, no alignment checking,
+ * no WXN.
+ */
+#define SCTLR_EL2_RESET (3 << 28 | 3 << 22 | 1 << 18 | 1 << 16 | 1 << 11 | 3 << 4)
+
 #define SPSR_A		(1 << 8)	/* System Error masked */
 #define SPSR_D		(1 << 9)	/* Debug masked */
 #define SPSR_I		(1 << 7)	/* IRQ masked */
