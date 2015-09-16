@@ -1,5 +1,5 @@
 /*
- * spin.S - spin-table boot protocol implementation
+ * arch/aarch64/spin.S - spin-table boot protocol implementation
  *
  * Copyright (C) 2013 ARM Limited. All rights reserved.
  *

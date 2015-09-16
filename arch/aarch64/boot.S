@@ -1,5 +1,5 @@
 /*
- * boot.S - simple register setup code for stand-alone Linux booting
+ * arch/aarch64/boot.S - simple register setup code for stand-alone Linux booting
  *
  * Copyright (C) 2012 ARM Limited. All rights reserved.
  *

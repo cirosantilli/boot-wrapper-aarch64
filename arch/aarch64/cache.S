@@ -1,5 +1,5 @@
 /*
- * cache.S - simple cache clean+invalidate code for stand-alone Linux booting
+ * arch/aarch64/cache.S - simple cache clean+invalidate code for stand-alone Linux booting
  *
  * Copyright (C) 2013 ARM Limited. All rights reserved.
  *

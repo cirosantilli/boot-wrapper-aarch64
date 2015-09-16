@@ -1,5 +1,5 @@
 /*
- * mmu.S - EL3 MMU identity map code to enable the use of exclusives.
+ * arch/aarch64/mmu.S - EL3 MMU identity map code to enable the use of exclusives.
  *
  * Copyright (C) 2013 ARM Limited. All rights reserved.
  *

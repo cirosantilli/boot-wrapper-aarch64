@@ -1,5 +1,5 @@
 /*
- * gic.S - Secure gic initialisation for stand-alone Linux booting
+ * arch/aarch64/gic.S - Secure gic initialisation for stand-alone Linux booting
  *
  * Copyright (C) 2013 ARM Limited. All rights reserved.
  *

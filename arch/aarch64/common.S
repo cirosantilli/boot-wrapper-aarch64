@@ -1,5 +1,5 @@
 /*
- * common.S - common definitions useful for boot code
+ * arch/aarch64/common.S - common definitions useful for boot code
  *
  * Copyright (C) 2013 ARM Limited. All rights reserved.
  *

@@ -1,5 +1,5 @@
 /*
- * psci.S - basic PSCI implementation
+ * arch/aarch64/psci.S - basic PSCI implementation
  *
  * Copyright (C) 2013 ARM Limited. All rights reserved.
  *

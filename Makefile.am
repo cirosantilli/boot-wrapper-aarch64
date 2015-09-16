@@ -19,6 +19,7 @@ DEFINES		+= -DSYSREGS_BASE=$(SYSREGS_BASE)
 DEFINES		+= -DUART_BASE=$(UART_BASE)
 
 OFILES		=
+ARCH_SRC	:= arch/aarch64/
 
 if PSCI
 BOOTMETHOD	:= psci.o
@@ -80,7 +81,7 @@ endif
 
 CPPFLAGS	+= $(INITRD_FLAGS)
 
-OFILES		+= boot.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD)
+OFILES		+= $(addprefix $(ARCH_SRC),boot.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD))
 
 all: $(IMAGE)
 

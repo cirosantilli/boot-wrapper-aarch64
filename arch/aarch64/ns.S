@@ -1,5 +1,5 @@
 /*
- * ns.S - code to initialise everything required when first booting non-secure.
+ * arch/aarch64/ns.S - code to initialise everything required when first booting non-secure.
  *
  * Copyright (C) 2013 ARM Limited. All rights reserved.
  *
