@@ -38,7 +38,9 @@ _start:
 1:	mov	x0, #0x30			// RES1
 	orr	x0, x0, #(1 << 0)		// Non-secure EL1
 	orr	x0, x0, #(1 << 8)		// HVC enable
+#ifndef KERNEL_32
 	orr	x0, x0, #(1 << 10)		// 64-bit EL2
+#endif
 	msr	scr_el3, x0
 
 	msr	cptr_el3, xzr			// Disable copro. traps to EL3
@@ -65,6 +67,9 @@ jump_kernel:
 	mov	x22, x3
 	mov	x23, x4
 
+	ldr	x0, =SCTLR_EL1_RESET
+	msr	sctlr_el1, x0
+
 	ldr	x0, =SCTLR_EL2_RESET
 	msr	sctlr_el2, x0
 
@@ -84,6 +89,13 @@ jump_kernel:
 	br	x19			// No EL3
 
 1:	mov	x4, #SPSR_KERNEL
+
+	/*
+	 * If bit 0 of the kernel address is set, we're entering in AArch32
+	 * thumb mode. Set SPSR.T accordingly.
+	 */
+	bfi	x4, x19, #5, #1
+
 	msr	elr_el3, x19
 	msr	spsr_el3, x4
 	eret

@@ -10,6 +10,7 @@
 #define __PSCI_H
 
 #define PSCI_CPU_OFF			0x84000002
+#define PSCI_CPU_ON_32			0x84000003
 #define PSCI_CPU_ON_64			0xc4000003
 
 #define PSCI_RET_SUCCESS		0

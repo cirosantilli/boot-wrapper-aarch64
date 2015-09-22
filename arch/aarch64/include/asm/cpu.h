@@ -25,8 +25,19 @@
 #define SPSR_F			(1 << 6)	/* FIQ masked */
 #define SPSR_T			(1 << 5)	/* Thumb */
 #define SPSR_EL2H		(9 << 0)	/* EL2 Handler mode */
+#define SPSR_HYP		(0x1a << 0)	/* M[3:0] = hyp, M[4] = AArch32 */
 
+#define SCTLR_EL1_CP15BEN	(1 << 5)
+#define SCTLR_EL1_RES1		(3 << 28 | 3 << 22 | 1 << 11)
+
+#ifdef KERNEL_32
+/* 32-bit kernel decompressor uses CP15 barriers */
+#define SCTLR_EL1_RESET		(SCTLR_EL1_RES1 | SCTLR_EL1_CP15BEN)
+#define SPSR_KERNEL		(SPSR_A | SPSR_I | SPSR_F | SPSR_HYP)
+#else
+#define SCTLR_EL1_RESET		SCTLR_EL1_RES1
 #define SPSR_KERNEL		(SPSR_A | SPSR_D | SPSR_I | SPSR_F | SPSR_EL2H)
+#endif
 
 #ifndef __ASSEMBLY__
 

@@ -22,6 +22,14 @@ DEFINES		+= -DSYSREGS_BASE=$(SYSREGS_BASE)
 DEFINES		+= -DUART_BASE=$(UART_BASE)
 DEFINES		+= -DSTACK_SIZE=256
 
+if KERNEL_32
+DEFINES		+= -DKERNEL_32
+PSCI_CPU_ON	:= 0x84000003
+else
+PSCI_CPU_ON	:= 0xc4000003
+endif
+PSCI_CPU_OFF	:= 0x84000002
+
 OFILES		=
 
 CFLAGS		+= -mgeneral-regs-only -mstrict-align
@@ -33,8 +41,8 @@ OFILES		+= psci.o
 PSCI_NODE	:= psci {				\
 			compatible = \"arm,psci\";	\
 			method = \"smc\";		\
-			cpu_on = <0xc4000003>;		\
-			cpu_off = <0x84000002>;		\
+			cpu_on = <$(PSCI_CPU_ON)>;	\
+			cpu_off = <$(PSCI_CPU_OFF)>;	\
 		   };
 CPU_NODES	:= $(shell $(top_srcdir)/gen-cpu-nodes.sh $(CPU_IDS))
 CPUS_NODE	:= cpus {		\
@@ -60,8 +68,14 @@ DEFINES		+= -DGIC_DIST_BASE=$(GIC_DIST_BASE)
 GIC		:= gic.o
 endif
 
+if KERNEL_32
+MBOX_OFFSET	:= 0x7ff8
+KERNEL_OFFSET	:= 0x8000
+else
 MBOX_OFFSET	:= 0xfff8
 KERNEL_OFFSET	:= 0x80000
+endif
+
 LD_SCRIPT	:= model.lds.S
 IMAGE		:= linux-system.axf
 

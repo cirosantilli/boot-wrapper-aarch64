@@ -16,12 +16,21 @@ fi
 
 AM_INIT_AUTOMAKE([foreign])
 
+AC_ARG_ENABLE([aarch32-kernel],
+	AC_HELP_STRING([--enable-aarch32-kernel],
+		       [start kernel in AArch32 instead of AArch64]),
+	[KERNEL_ES=32 USE_PSCI=yes AC_SUBST([KERNEL_32], [1]) AC_DEFINE([KERNEL_32])],
+	[KERNEL_ES=64])
+AM_CONDITIONAL([KERNEL_32], [test "x$KERNEL_ES" = x32])
+
 # Allow a user to pass --with-kernel-dir
 AC_ARG_WITH([kernel-dir],
 	AS_HELP_STRING([--with-kernel-dir], [specify the root Linux kernel build directory (required)]),
 	AC_SUBST([KERN_DIR], [$withval]),
 	AC_MSG_ERROR([No kernel directory specified. Use --with-kernel-dir]))
-KERN_IMAGE=$KERN_DIR/arch/arm64/boot/Image
+AS_IF([test "x$KERNEL_ES" = x32],
+	[KERN_IMAGE=$KERN_DIR/arch/arm/boot/zImage],
+	[KERN_IMAGE=$KERN_DIR/arch/arm64/boot/Image])
 KERN_DTB=$KERN_DIR/arch/arm64/boot/dts/rtsm_ve-aemv8a.dtb
 
 # Allow the user to override the default DTB
@@ -46,6 +55,10 @@ AC_ARG_ENABLE([psci],
 	[USE_PSCI=$enableval])
 AM_CONDITIONAL([PSCI], [test "x$USE_PSCI" = "xyes"])
 AS_IF([test "x$USE_PSCI" = "xyes"], [], [USE_PSCI=no])
+
+AS_IF([test "x$USE_PSCI" != "xyes" -a "x$KERNEL_ES" = "x32"],
+	[AC_MSG_ERROR([With an AArch32 kernel, boot method must be PSCI.])]
+)
 
 # Allow a user to pass --with-cpu-ids
 C_CPU_IDS="0x0,0x1,0x2,0x3"
@@ -102,4 +115,5 @@ echo "  Embedded initrd:                   ${FILESYSTEM:-NONE}"
 echo "  Use PSCI?                          ${USE_PSCI}"
 echo "  CPU IDs:                           ${CPU_IDS}"
 echo "  Use GICv3?                         ${USE_GICV3}"
+echo "  Kernel execution state:            AArch${KERNEL_ES}"
 echo ""

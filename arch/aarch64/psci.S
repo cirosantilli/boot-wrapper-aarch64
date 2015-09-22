@@ -59,8 +59,9 @@ err_exception:
 	.endm
 
 smc_entry32:
-	mov	w0, PSCI_RET_NOT_SUPPORTED
-	eret
+	/* Clear upper bits */
+	mov	w0, w0
+	/* Pass through */
 
 smc_entry64:
 	/* SMC entry uses 112 bytes of stack */
@@ -74,6 +75,7 @@ smc_entry64:
 	stp	x30, xzr, [sp, #-16]!
 
 	/* If function ID matches, do_call with procedure address in x7 */
+	branch_if PSCI_CPU_ON_32,	psci_cpu_on
 	branch_if PSCI_CPU_ON_64,	psci_cpu_on
 	branch_if PSCI_CPU_OFF,		psci_cpu_off
 

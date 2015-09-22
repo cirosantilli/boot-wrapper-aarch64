@@ -40,7 +40,11 @@ void __noreturn spin(unsigned long *mbox, unsigned long invalid, int is_entry)
 	}
 
 	if (is_entry)
+#ifdef KERNEL_32
+		jump_kernel(addr, 0, ~0, (unsigned long)&dtb, 0);
+#else
 		jump_kernel(addr, (unsigned long)&dtb, 0, 0, 0);
+#endif
 
 	jump_kernel(addr, 0, 0, 0, 0);
 
