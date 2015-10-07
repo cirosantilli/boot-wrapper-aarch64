@@ -36,5 +36,3 @@ _start:
 	b	start_el3
 
 	.ltorg
-
-	.org	0x100

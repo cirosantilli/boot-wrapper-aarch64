@@ -55,5 +55,3 @@ start_no_el3:
 	b	kernel
 
 	.ltorg
-
-	.org	0x80

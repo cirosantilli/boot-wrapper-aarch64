@@ -41,7 +41,7 @@
 #define BLOCK_DEV_1GB(_pa)	(DEV_ATTR_UPPER | BLOCK_1GB_PA(_pa) | \
 				 DEV_ATTR_LOWER | BLOCK_VALID)
 
-	.data
+	.section .pgtables, "w"
 
 #define BLOCK_INVALID	(0 << 0)
 
@@ -111,7 +111,7 @@ switch_to_idmap:
 	dsb	sy
 	isb
 
-	adr	x0, pgtable_l1
+	ldr	x0, =pgtable_l1
 	msr	ttbr0_el3, x0
 
 	ldr	x0, =MAIR_ATTR

@@ -28,7 +28,7 @@
 	b	\label
 	.endm
 
-	.data
+	.section .vectors, "w"
 
 	.align 11
 vector:
@@ -56,6 +56,7 @@ vector:
 	ventry	err_exception
 	ventry	err_exception
 
+	.data
 	/*
 	 * Array of the CPU ID (MPIDR & MPIDR_ID_BITS) of each CPU in the system.
 	 * The index into the array is used as a logical id, and an index into
@@ -176,7 +177,7 @@ __find_logical_index:
 	ret
 
 setup_vector:
-	adr	x0, vector
+	ldr	x0, =vector
 	msr	VBAR_EL3, x0
 	isb
 	ret

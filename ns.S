@@ -44,4 +44,3 @@ ns_init_system:
 	ret
 
 	.ltorg
-	.org 0x80

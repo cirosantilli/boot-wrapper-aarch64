@@ -78,4 +78,3 @@ dcaches_done:
 	ret
 
 	.ltorg
-	.org 0x100

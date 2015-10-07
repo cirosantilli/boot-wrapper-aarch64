@@ -21,12 +21,14 @@ INPUT(FILESYSTEM)
 SECTIONS
 {
 	. = PHYS_OFFSET;
-	.text : { boot.o }
-	.text : { cache.o }
-	.text : { GIC }
-	.text : { mmu.o }
-	.text : { ns.o }
-	.text : { BOOTMETHOD }
+	.text : { boot.o(.text .data) }
+	.text : { cache.o(.text .data) }
+	.text : { GIC(.text .data) }
+	.text : { mmu.o(.text .data) }
+	.text : { ns.o(.text) }
+	.text : { BOOTMETHOD(.text .data) }
+	.text : { *(.vectors) }
+	.text : { *(.pgtables) }
 	. = PHYS_OFFSET + MBOX_OFFSET;
 	mbox = .;
 	.mbox : { QUAD(0x0) }
