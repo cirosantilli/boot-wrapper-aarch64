@@ -49,10 +49,13 @@ SECTIONS
 		*(.text* .data* .rodata* .bss* COMMON)
 		*(.vectors)
 		*(.stack)
+		PROVIDE(etext = .);
 	}
 
 	.mbox (PHYS_OFFSET + MBOX_OFFSET): {
 		mbox = .;
 		QUAD(0x0)
 	}
+
+	ASSERT(etext <= TEXT_LIMIT, ".text overflow!")
 }
