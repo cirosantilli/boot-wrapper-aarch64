@@ -48,6 +48,7 @@ SECTIONS
 		*(.init)
 		*(.text .data .rodata* .bss COMMON)
 		*(.vectors)
+		*(.stack)
 		*(.pgtables)
 	}
 

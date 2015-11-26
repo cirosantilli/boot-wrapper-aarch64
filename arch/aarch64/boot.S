@@ -13,6 +13,14 @@
 
 	.globl	_start
 _start:
+	mrs	x0, mpidr_el1
+	ldr	x1, =MPIDR_ID_BITS
+	and	x0, x0, x1
+	bl	find_logical_id
+	cmp	x0, #MPIDR_INVALID
+	beq	err_invalid_id
+	bl	setup_stack
+
 	/*
 	 * EL3 initialisation
 	 */
@@ -35,4 +43,6 @@ _start:
 
 	b	start_el3
 
+err_invalid_id:
+	b	.
 	.ltorg

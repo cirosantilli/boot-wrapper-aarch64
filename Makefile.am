@@ -20,6 +20,7 @@ DEFINES		+= -DCPU_IDS=$(CPU_IDS)
 DEFINES		+= -DNR_CPUS=$(NR_CPUS)
 DEFINES		+= -DSYSREGS_BASE=$(SYSREGS_BASE)
 DEFINES		+= -DUART_BASE=$(UART_BASE)
+DEFINES		+= -DSTACK_SIZE=256
 
 OFILES		=
 ARCH_SRC	:= arch/aarch64/
@@ -84,7 +85,7 @@ endif
 
 CPPFLAGS	+= $(INITRD_FLAGS)
 
-OFILES		+= $(addprefix $(ARCH_SRC),boot.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD) utils.o)
+OFILES		+= $(addprefix $(ARCH_SRC),boot.o stack.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD) utils.o)
 
 all: $(IMAGE)
 
