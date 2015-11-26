@@ -18,7 +18,7 @@ DEFINES		+= -DCPU_IDS=$(CPU_IDS)
 DEFINES		+= -DSYSREGS_BASE=$(SYSREGS_BASE)
 DEFINES		+= -DUART_BASE=$(UART_BASE)
 
-BOOTLOADER	:= boot.S
+OFILES		=
 
 if PSCI
 BOOTMETHOD	:= psci.o
@@ -80,12 +80,14 @@ endif
 
 CPPFLAGS	+= $(INITRD_FLAGS)
 
+OFILES		+= boot.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD)
+
 all: $(IMAGE)
 
-CLEANFILES = $(IMAGE) boot.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD) model.lds fdt.dtb
+CLEANFILES = $(IMAGE) $(OFILES) model.lds fdt.dtb
 
-$(IMAGE): boot.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD) model.lds fdt.dtb $(KERNEL_IMAGE) $(FILESYSTEM)
-	$(LD) -o $@ --script=model.lds
+$(IMAGE): $(OFILES) model.lds fdt.dtb $(KERNEL_IMAGE) $(FILESYSTEM)
+	$(LD) $(OFILES) -o $@ --script=model.lds
 
 %.o: %.S Makefile
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(DEFINES) -c -o $@ $<

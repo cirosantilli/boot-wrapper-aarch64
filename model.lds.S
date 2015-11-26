@@ -11,12 +11,6 @@ OUTPUT_FORMAT("elf64-littleaarch64")
 OUTPUT_ARCH(aarch64)
 TARGET(binary)
 
-INPUT(./boot.o)
-INPUT(./cache.o)
-INPUT(./GIC)
-INPUT(./mmu.o)
-INPUT(./ns.o)
-INPUT(./BOOTMETHOD)
 INPUT(KERNEL)
 INPUT(./fdt.dtb)
 
