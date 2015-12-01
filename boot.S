@@ -9,7 +9,7 @@
 
 #include "common.S"
 
-	.text
+	.section .init
 
 	.globl	_start
 _start:

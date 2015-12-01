@@ -18,34 +18,41 @@ INPUT(./fdt.dtb)
 INPUT(FILESYSTEM)
 #endif
 
+ENTRY(_start)
+
 SECTIONS
 {
-	. = PHYS_OFFSET;
-	.text : { boot.o(.text .data) }
-	.text : { cache.o(.text .data) }
-	.text : { GIC(.text .data) }
-	.text : { mmu.o(.text .data) }
-	.text : { ns.o(.text) }
-	.text : { BOOTMETHOD(.text .data) }
-	.text : { *(.vectors) }
-	.text : { *(.pgtables) }
-	. = PHYS_OFFSET + MBOX_OFFSET;
-	mbox = .;
-	.mbox : { QUAD(0x0) }
-	. = PHYS_OFFSET + KERNEL_OFFSET;
-	kernel = .;
-	.kernel : { KERNEL }
+	/*
+	 * Order matters: consume binary blobs first, so they won't appear in
+	 * the boot section's *(.data)
+	 */
+	.kernel (PHYS_OFFSET + KERNEL_OFFSET): {
+		kernel = .;
+		KERNEL
+	}
 
-	. = PHYS_OFFSET + FDT_OFFSET;
-	dtb = .;
-	.dtb : { ./fdt.dtb }
-	. = PHYS_OFFSET + FS_OFFSET;
-	filesystem = .;
+	.dtb (PHYS_OFFSET + FDT_OFFSET): {
+		dtb = .;
+		./fdt.dtb
+	}
+
 #ifdef USE_INITRD
-	.filesystem : { FILESYSTEM }
-	fs_size = . - filesystem;
+	.filesystem (PHYS_OFFSET + FS_OFFSET): {
+		filesystem = .;
+		FILESYSTEM
+		fs_size = . - filesystem;
+	}
 #endif
 
-	.data : { *(.data) }
-	.bss : { *(.bss) }
+	.boot PHYS_OFFSET: {
+		*(.init)
+		*(.text .data .rodata* .bss COMMON)
+		*(.vectors)
+		*(.pgtables)
+	}
+
+	.mbox (PHYS_OFFSET + MBOX_OFFSET): {
+		mbox = .;
+		QUAD(0x0)
+	}
 }
