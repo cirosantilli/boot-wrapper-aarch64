@@ -15,41 +15,23 @@
 	.globl start_el3
 
 start_el3:
-	/*
-	 * Prepare the switch to the EL2_SP1 mode from EL3
-	 */
-	ldr	x0, =SCTLR_EL2_RESET
-	msr	sctlr_el2, x0
-	ldr	x0, =start_no_el3		// Return after mode switch
-	mov	x1, #SPSR_KERNEL
-	drop_el	x1, x0
-
 start_no_el3:
-	/*
-	 * Kernel parameters
-	 */
-	mov	x0, xzr
-	mov	x1, xzr
-	mov	x2, xzr
-	mov	x3, xzr
-
-	cpuid	x4, x5
-	b.eq	2f
+	cpuid	x0, x1
+	bl	find_logical_id
 
 	/*
-	 * Secondary CPUs
+	 * Primary CPU (x0 = 0) jumps to kernel, the other ones wait for an
+	 * address to appear in mbox
 	 */
-1:	wfe
-	ldr	x4, mbox
-	cbz	x4, 1b
-	br	x4				// branch to the given address
+	adr	x3, mbox
+	adr	x4, kernel_address
+	cmp	x0, #0
+	csel	x1, x3, x4, ne
+	mov	x2, #0
+	bl	first_spin
 
-2:
-	/*
-	 * Primary CPU
-	 */
-	bl	ns_init_system
-	ldr	x0, =dtb			// device tree blob
-	b	kernel
+kernel_address:
+	.align 3
+	.long 0
 
 	.ltorg

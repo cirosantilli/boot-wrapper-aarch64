@@ -23,10 +23,13 @@ DEFINES		+= -DUART_BASE=$(UART_BASE)
 DEFINES		+= -DSTACK_SIZE=256
 
 OFILES		=
+
+CFLAGS		+= -mgeneral-regs-only -mstrict-align
 ARCH_SRC	:= arch/aarch64/
 
 if PSCI
 BOOTMETHOD	:= psci.o
+OFILES		+= psci.o
 PSCI_NODE	:= psci {				\
 			compatible = \"arm,psci\";	\
 			method = \"smc\";		\
@@ -85,7 +88,9 @@ endif
 
 CPPFLAGS	+= $(INITRD_FLAGS)
 CFLAGS		+= -Iinclude/ -I$(ARCH_SRC)/include/
+CFLAGS		+= -Wall -fomit-frame-pointer
 
+OFILES		+= boot_common.o
 OFILES		+= $(addprefix $(ARCH_SRC),boot.o stack.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD) utils.o)
 
 all: $(IMAGE)
@@ -97,6 +102,9 @@ $(IMAGE): $(OFILES) model.lds fdt.dtb $(KERNEL_IMAGE) $(FILESYSTEM)
 
 %.o: %.S Makefile
 	$(CC) $(CPPFLAGS) -D__ASSEMBLY__ $(CFLAGS) $(DEFINES) -c -o $@ $<
+
+%.o: %.c Makefile
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(DEFINES) -c -o $@ $<
 
 model.lds: $(LD_SCRIPT) Makefile
 	$(CPP) $(CPPFLAGS) -ansi -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) -DKERNEL=$(KERNEL_IMAGE) -DFILESYSTEM=$(FILESYSTEM) -P -C -o $@ $<

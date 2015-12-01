@@ -7,27 +7,10 @@
  * found in the LICENSE.txt file.
  */
 
+#include <cpu.h>
+
 	.globl find_logical_id
 	.globl setup_vector
-
-#include "common.S"
-
-	.data
-
-	/*
-	 * Array of the CPU ID (MPIDR & MPIDR_ID_BITS) of each CPU in the system.
-	 * The index into the array is used as a logical id, and an index into
-	 * the branch table. The branch table is automatically padded to the
-	 * same size as the id table.
-	 *
-	 * The first CPU in the table is considered to be the primary CPU, and
-	 * is the only CPU to immediately branch off to the kernel.
-	 */
-	.align 3
-id_table:
-	.quad CPU_IDS
-__id_end:
-	.quad MPIDR_INVALID
 
 	.text
 

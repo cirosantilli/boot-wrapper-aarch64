@@ -13,4 +13,13 @@
 
 #define MPIDR_INVALID	(-1)
 
+#ifndef __ASSEMBLY__
+
+#define dsb(arg)	asm volatile ("dsb " #arg "\n" : : : "memory")
+#define sev()		asm volatile ("sev\n" : : : "memory")
+#define wfe()		asm volatile ("wfe\n" : : : "memory")
+
+unsigned int find_logical_id(unsigned long mpidr);
+
+#endif /* !__ASSEMBLY__ */
 #endif

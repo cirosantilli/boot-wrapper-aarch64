@@ -13,6 +13,8 @@
 
 #ifndef __ASSEMBLY__
 
+#define sevl()		asm volatile ("sevl\n" : : : "memory")
+
 static inline unsigned long read_mpidr(void)
 {
 	unsigned long mpidr;
