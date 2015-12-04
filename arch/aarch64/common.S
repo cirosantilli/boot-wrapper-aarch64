@@ -7,8 +7,7 @@
  * found in the LICENSE.txt file.
  */
 
-#define MPIDR_ID_BITS	(0xff00ffffff)
-#define MPIDR_INVALID	(-1)
+#include <cpu.h>
 
 #define	CURRENTEL_EL3	(3 << 2)
 
@@ -34,4 +33,11 @@
 	msr	elr_el3, \addr
 	msr	spsr_el3, \mode
 	eret
+	.endm
+
+	/* Put MPIDR into \dest, clobber \tmp and flags */
+	.macro cpuid dest, tmp
+	mrs	\dest, mpidr_el1
+	ldr	\tmp, =MPIDR_ID_BITS
+	ands	\dest, \dest, \tmp
 	.endm

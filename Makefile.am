@@ -84,6 +84,7 @@ CHOSEN_NODE	:= chosen {						\
 endif
 
 CPPFLAGS	+= $(INITRD_FLAGS)
+CFLAGS		+= -Iinclude/ -I$(ARCH_SRC)/include/
 
 OFILES		+= $(addprefix $(ARCH_SRC),boot.o stack.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD) utils.o)
 
@@ -95,7 +96,7 @@ $(IMAGE): $(OFILES) model.lds fdt.dtb $(KERNEL_IMAGE) $(FILESYSTEM)
 	$(LD) $(OFILES) -o $@ --script=model.lds
 
 %.o: %.S Makefile
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(DEFINES) -c -o $@ $<
+	$(CC) $(CPPFLAGS) -D__ASSEMBLY__ $(CFLAGS) $(DEFINES) -c -o $@ $<
 
 model.lds: $(LD_SCRIPT) Makefile
 	$(CPP) $(CPPFLAGS) -ansi -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) -DKERNEL=$(KERNEL_IMAGE) -DFILESYSTEM=$(FILESYSTEM) -P -C -o $@ $<

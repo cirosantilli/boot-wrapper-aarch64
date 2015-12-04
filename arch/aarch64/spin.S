@@ -33,9 +33,7 @@ start_no_el3:
 	mov	x2, xzr
 	mov	x3, xzr
 
-	mrs	x4, mpidr_el1
-	ldr	x5, =MPIDR_ID_BITS
-	tst	x4, x5
+	cpuid	x4, x5
 	b.eq	2f
 
 	/*

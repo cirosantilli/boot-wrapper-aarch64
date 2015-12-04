@@ -89,9 +89,7 @@ psci_call64:
  * x1 - optional power state parameter, ignored here
  */
 psci_cpu_off:
-	mrs	x0, mpidr_el1
-	ldr	x1, =MPIDR_ID_BITS
-	and	x0, x0, x1
+	cpuid	x0, x1
 	bl	find_logical_id
 	adr	x1, branch_table
 	mov	x2, #ADDR_INVALID
@@ -142,9 +140,7 @@ start_el3:
 	bl	switch_to_idmap
 
 	/* only boot the primary cpu (entry 0 in the table) */
-	mrs	x0, mpidr_el1
-	ldr	x1, =MPIDR_ID_BITS
-	and	x0, x0, x1
+	cpuid	x0, x1
 	bl	find_logical_id
 	cbnz	x0, spin
 
@@ -159,9 +155,7 @@ start_el3:
  * When a valid address appears, branch to it.
  */
 spin:
-	mrs	x0, mpidr_el1
-	ldr	x1, =MPIDR_ID_BITS
-	and	x0, x0, x1
+	cpuid	x0, x1
 	bl	find_logical_id
 	cmp	x0, #-1
 	b.eq	spin_dead
@@ -189,9 +183,7 @@ spin:
  * primary cpu, all others will be trapped in an infinite loop.
  */
 start_no_el3:
-	mrs	x0, mpidr_el1
-	ldr	x1, =MPIDR_ID_BITS
-	and	x0, x0, x1
+	cpuid	x0, x1
 	bl	find_logical_id
 	cbz	x0, start_cpu0
 spin_dead:

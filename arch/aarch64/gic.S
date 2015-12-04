@@ -18,9 +18,7 @@ gic_secure_init:
 	 * Check for the primary CPU to avoid a race on the distributor
 	 * registers.
 	 */
-	mrs	x0, mpidr_el1
-	ldr	x1, =MPIDR_ID_BITS
-	tst	x0, x1
+	cpuid	x0, x1
 	b.ne	1f				// secondary CPU
 
 	ldr	x1, =GIC_DIST_BASE		// GICD_CTLR

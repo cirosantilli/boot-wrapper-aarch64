@@ -27,9 +27,7 @@ gic_secure_init:
 	/*
 	 * Only the primary CPU setups the (re)distributors.
 	 */
-	mrs	x0, mpidr_el1
-	ldr	x1, =MPIDR_ID_BITS
-	tst	x0, x1
+	cpuid	x0, x1
 	b.ne	setup_cpu_if			// secondary CPU
 
 	ldr	x1, =GIC_DIST_BASE		// GICD_CTLR
