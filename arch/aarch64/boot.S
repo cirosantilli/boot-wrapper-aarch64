@@ -79,7 +79,9 @@ jump_kernel:
 
 	mov	x4, #SPSR_KERNEL
 	adr	x5, el2_trampoline
-	drop_el	x4, x5
+	msr	elr_el3, x5
+	msr	spsr_el3, x4
+	eret
 
 el2_trampoline:
 	bl	flush_caches
