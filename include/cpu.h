@@ -15,6 +15,7 @@
 
 #ifndef __ASSEMBLY__
 
+#define isb()		asm volatile ("isb\n" : : : "memory")
 #define dsb(arg)	asm volatile ("dsb " #arg "\n" : : : "memory")
 #define sev()		asm volatile ("sev\n" : : : "memory")
 #define wfe()		asm volatile ("wfe\n" : : : "memory")

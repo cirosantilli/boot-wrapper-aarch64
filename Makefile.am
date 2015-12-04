@@ -90,8 +90,8 @@ CPPFLAGS	+= $(INITRD_FLAGS)
 CFLAGS		+= -Iinclude/ -I$(ARCH_SRC)/include/
 CFLAGS		+= -Wall -fomit-frame-pointer
 
-OFILES		+= boot_common.o ns.o
-OFILES		+= $(addprefix $(ARCH_SRC),boot.o stack.o cache.o $(GIC) mmu.o $(BOOTMETHOD) utils.o)
+OFILES		+= boot_common.o ns.o $(GIC)
+OFILES		+= $(addprefix $(ARCH_SRC),boot.o stack.o cache.o mmu.o $(BOOTMETHOD) utils.o)
 
 all: $(IMAGE)
 

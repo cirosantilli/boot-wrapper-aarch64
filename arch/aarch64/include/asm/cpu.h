@@ -30,6 +30,8 @@
 
 #ifndef __ASSEMBLY__
 
+#include <stdint.h>
+
 #define sevl()		asm volatile ("sevl\n" : : : "memory")
 
 static inline unsigned long read_mpidr(void)
@@ -40,6 +42,18 @@ static inline unsigned long read_mpidr(void)
 	return mpidr & MPIDR_ID_BITS;
 }
 
+static inline uint64_t read_id_aa64pfr0(void)
+{
+	uint64_t val;
+
+	asm volatile ("mrs	%0, id_aa64pfr0_el1\n" : "=r" (val));
+	return val;
+}
+
+static inline int has_gicv3_sysreg(void)
+{
+	return !!((read_id_aa64pfr0() >> 24) & 0xf);
+}
 
 #endif /* !__ASSEMBLY__ */
 
