@@ -5,16 +5,14 @@
 # Use of this source code is governed by a BSD-style license that can
 # be found in the LICENSE.txt file.
 
-AC_INIT([aarch64-boot-wrapper], [v0.1])
-
-# Ensure that we're using an AArch64 compiler
-AC_CANONICAL_SYSTEM
-
-if test "x$host_cpu" != "xaarch64"; then
-	AC_MSG_ERROR([The boot-wrapper can only be used with an AArch64 compiler.])
-fi
+AC_INIT([boot-wrapper], [v0.2])
 
 AM_INIT_AUTOMAKE([foreign])
+
+AC_ARG_ENABLE([aarch32-bw],
+	      AS_HELP_STRING([--enable-aarch32-bw], [build a 32-bit boot-wrapper]),
+	      [BOOTWRAPPER_ES=32], [BOOTWRAPPER_ES=64])
+AM_CONDITIONAL([BOOTWRAPPER_32], [test "x$BOOTWRAPPER_ES" = "x32"])
 
 AC_ARG_ENABLE([aarch32-kernel],
 	AC_HELP_STRING([--enable-aarch32-kernel],
@@ -22,6 +20,10 @@ AC_ARG_ENABLE([aarch32-kernel],
 	[KERNEL_ES=32 USE_PSCI=yes AC_SUBST([KERNEL_32], [1]) AC_DEFINE([KERNEL_32])],
 	[KERNEL_ES=64])
 AM_CONDITIONAL([KERNEL_32], [test "x$KERNEL_ES" = x32])
+
+AS_IF([test "x$BOOTWRAPPER_ES" = x32 -a "x$KERNEL_ES" != x32],
+	[AC_MSG_ERROR([a 32-bit boot-wrapper cannot launch a 64-bit kernel])]
+)
 
 # Allow a user to pass --with-kernel-dir
 AC_ARG_WITH([kernel-dir],
@@ -115,5 +117,6 @@ echo "  Embedded initrd:                   ${FILESYSTEM:-NONE}"
 echo "  Use PSCI?                          ${USE_PSCI}"
 echo "  CPU IDs:                           ${CPU_IDS}"
 echo "  Use GICv3?                         ${USE_GICV3}"
+echo "  Boot-wrapper execution state:      AArch${BOOTWRAPPER_ES}"
 echo "  Kernel execution state:            AArch${KERNEL_ES}"
 echo ""

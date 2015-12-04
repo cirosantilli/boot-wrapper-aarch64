@@ -7,8 +7,13 @@
  * found in the LICENSE.txt file.
  */
 
+#ifdef BOOTWRAPPER_32
+OUTPUT_FORMAT("elf32-littlearm")
+OUTPUT_ARCH(arm)
+#else
 OUTPUT_FORMAT("elf64-littleaarch64")
 OUTPUT_ARCH(aarch64)
+#endif
 TARGET(binary)
 
 INPUT(KERNEL)

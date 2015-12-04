@@ -57,7 +57,7 @@ void init_platform(void)
 	/* Enable the UART, TXen and RXen */
 	raw_writel(0x301,	PL011(UARTCR));
 
-	print_string("Boot-wrapper v0.1\r\n\r\n");
+	print_string("Boot-wrapper v0.2\r\n\r\n");
 
 	/*
 	 * CLCD output site MB

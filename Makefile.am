@@ -32,8 +32,14 @@ PSCI_CPU_OFF	:= 0x84000002
 
 OFILES		=
 
+if BOOTWRAPPER_32
+CPPFLAGS	+= -DBOOTWRAPPER_32
+CFLAGS		+= -marm -mno-unaligned-access
+ARCH_SRC	:= arch/aarch32/
+else
 CFLAGS		+= -mgeneral-regs-only -mstrict-align
 ARCH_SRC	:= arch/aarch64/
+endif
 
 if PSCI
 BOOTMETHOD	:= psci.o
