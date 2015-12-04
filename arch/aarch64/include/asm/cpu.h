@@ -50,6 +50,37 @@ static inline uint64_t read_id_aa64pfr0(void)
 	return val;
 }
 
+static inline uint32_t read_clidr(void)
+{
+	uint32_t val;
+
+	asm volatile ("mrs	%0, clidr_el1" : "=r" (val));
+	return val;
+}
+
+static inline uint32_t read_ccsidr(void)
+{
+	uint32_t val;
+
+	asm volatile ("mrs	%0, ccsidr_el1" : "=r" (val));
+	return val;
+}
+
+static inline void write_csselr(uint32_t val)
+{
+	asm volatile ("msr	csselr_el1, %0" : : "r" (val));
+}
+
+static inline void dccisw(uint32_t val)
+{
+	asm volatile ("dc	cisw, %0" : : "r" (val));
+}
+
+static inline void iciallu(void)
+{
+	asm volatile ("ic	iallu");
+}
+
 static inline int has_gicv3_sysreg(void)
 {
 	return !!((read_id_aa64pfr0() >> 24) & 0xf);

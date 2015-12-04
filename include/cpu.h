@@ -20,6 +20,8 @@
 #define sev()		asm volatile ("sev\n" : : : "memory")
 #define wfe()		asm volatile ("wfe\n" : : : "memory")
 
+#define clz(val)	__builtin_clz(val)
+
 unsigned int find_logical_id(unsigned long mpidr);
 
 #endif /* !__ASSEMBLY__ */
