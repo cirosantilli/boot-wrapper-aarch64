@@ -49,7 +49,6 @@ SECTIONS
 		*(.text* .data* .rodata* .bss* COMMON)
 		*(.vectors)
 		*(.stack)
-		*(.pgtables)
 	}
 
 	.mbox (PHYS_OFFSET + MBOX_OFFSET): {

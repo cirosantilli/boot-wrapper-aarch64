@@ -93,7 +93,7 @@ CFLAGS		+= -ffunction-sections -fdata-sections
 LDFLAGS		+= --gc-sections
 
 OFILES		+= boot_common.o bakery_lock.o ns.o $(GIC) cache.o lib.o
-OFILES		+= $(addprefix $(ARCH_SRC),boot.o stack.o mmu.o $(BOOTMETHOD) utils.o)
+OFILES		+= $(addprefix $(ARCH_SRC),boot.o stack.o $(BOOTMETHOD) utils.o)
 
 all: $(IMAGE)
 
