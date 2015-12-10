@@ -24,6 +24,4 @@
 
 #define PSCI_ADDR_INVALID		(-1)
 
-#include <asm/psci.h>
-
 #endif

@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <bakery_lock.h>
 #include <cpu.h>
 #include <psci.h>
 #include <spin.h>
@@ -19,18 +20,29 @@
 
 static unsigned long branch_table[NR_CPUS];
 
+bakery_ticket_t branch_table_lock[NR_CPUS];
+
+static int psci_store_address(unsigned int cpu, unsigned long address)
+{
+	if (branch_table[cpu] != PSCI_ADDR_INVALID)
+		return PSCI_RET_ALREADY_ON;
+
+	branch_table[cpu] = address;
+	return PSCI_RET_SUCCESS;
+}
+
 int psci_cpu_on(unsigned long target_mpidr, unsigned long address)
 {
 	int ret;
 	unsigned int cpu = find_logical_id(target_mpidr);
+	unsigned int this_cpu = find_logical_id(read_mpidr());
 
 	if (cpu == MPIDR_INVALID)
 		return PSCI_RET_INVALID_PARAMETERS;
 
-	ret = psci_store_address(address, branch_table + cpu);
-
-	dsb(ishst);
-	sev();
+	bakery_lock(branch_table_lock, this_cpu);
+	ret = psci_store_address(cpu, address);
+	bakery_unlock(branch_table_lock, this_cpu);
 
 	return ret;
 }

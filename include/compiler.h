@@ -14,5 +14,6 @@
 #define unreachable()	__builtin_unreachable()
 
 #define __noreturn	__attribute__((noreturn))
+#define __packed	__attribute__((packed))
 
 #endif

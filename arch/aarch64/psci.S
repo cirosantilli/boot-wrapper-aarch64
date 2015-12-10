@@ -102,7 +102,6 @@ smc_exit:
 start_el3:
 	ldr	x0, =vector
 	bl	setup_vector
-	bl	switch_to_idmap
 
 	/* only boot the primary cpu (entry 0 in the table) */
 	cpuid	x0, x1
