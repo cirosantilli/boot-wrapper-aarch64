@@ -8,6 +8,7 @@
  */
 
 #define MPIDR_ID_BITS	(0xff00ffffff)
+#define MPIDR_INVALID	(-1)
 
 #define	CURRENTEL_EL3	(3 << 2)
 

@@ -13,8 +13,11 @@ UART_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DT
 SYSREGS_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,vexpress-sysreg')
 CNTFRQ		:= 0x01800000	# 24Mhz
 
+NR_CPUS		:= $(shell echo $(CPU_IDS) | tr ',' ' ' | wc -w)
+
 DEFINES		= -DCNTFRQ=$(CNTFRQ)
 DEFINES		+= -DCPU_IDS=$(CPU_IDS)
+DEFINES		+= -DNR_CPUS=$(NR_CPUS)
 DEFINES		+= -DSYSREGS_BASE=$(SYSREGS_BASE)
 DEFINES		+= -DUART_BASE=$(UART_BASE)
 
@@ -81,7 +84,7 @@ endif
 
 CPPFLAGS	+= $(INITRD_FLAGS)
 
-OFILES		+= $(addprefix $(ARCH_SRC),boot.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD))
+OFILES		+= $(addprefix $(ARCH_SRC),boot.o cache.o $(GIC) mmu.o ns.o $(BOOTMETHOD) utils.o)
 
 all: $(IMAGE)
 

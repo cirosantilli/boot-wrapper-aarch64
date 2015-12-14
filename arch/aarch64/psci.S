@@ -20,7 +20,6 @@
 #error No CPU MPIDRs provided.
 #endif
 
-#define MPIDR_INVALID		(-1)
 #define ADDR_INVALID		(-1)
 
 	.macro	ventry	label
@@ -57,25 +56,8 @@ vector:
 	ventry	err_exception
 
 	.data
-	/*
-	 * Array of the CPU ID (MPIDR & MPIDR_ID_BITS) of each CPU in the system.
-	 * The index into the array is used as a logical id, and an index into
-	 * the branch table. The branch table is automatically padded to the
-	 * same size as the id table.
-	 *
-	 * The first CPU in the table is considered to be the primary CPU, and
-	 * is the only CPU to immediately branch off to the kernel.
-	 */
-	.align 3
-id_table:
-	.quad CPU_IDS
-__id_end:
-	.quad MPIDR_INVALID
-
-.equ	nr_cpus, ((__id_end - id_table) / 8)
-
 branch_table:
-	.rept (nr_cpus)
+	.rept (NR_CPUS)
 	.quad ADDR_INVALID
 	.endr
 
@@ -154,35 +136,8 @@ psci_cpu_on:
 	eret
 
 
-/*
- * Takes masked MPIDR in x0, returns logical id in x0
- * Returns -1 for unknown MPIDRs
- * Clobbers x1, x2, x3
- */
-find_logical_id:
-__find_logical_index:
-	adr	x2, id_table
-	mov	x1, xzr
-1:	mov	x3, #nr_cpus	// check we haven't walked off the end of the array
-	cmp	x1, x3
-	b.gt	3f
-	ldr	x3, [x2, x1, lsl #3]
-	cmp	x3, x0
-	b.eq	2f
-	add	x1, x1, #1
-	b 1b
-2:	mov	x0, x1
-	ret
-3:	mov	x0, #-1
-	ret
-
-setup_vector:
-	ldr	x0, =vector
-	msr	VBAR_EL3, x0
-	isb
-	ret
-
 start_el3:
+	ldr	x0, =vector
 	bl	setup_vector
 	bl	switch_to_idmap
 
