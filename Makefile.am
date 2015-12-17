@@ -89,8 +89,10 @@ endif
 CPPFLAGS	+= $(INITRD_FLAGS)
 CFLAGS		+= -Iinclude/ -I$(ARCH_SRC)/include/
 CFLAGS		+= -Wall -fomit-frame-pointer
+CFLAGS		+= -ffunction-sections -fdata-sections
+LDFLAGS		+= --gc-sections
 
-OFILES		+= boot_common.o ns.o $(GIC) cache.o
+OFILES		+= boot_common.o ns.o $(GIC) cache.o lib.o
 OFILES		+= $(addprefix $(ARCH_SRC),boot.o stack.o mmu.o $(BOOTMETHOD) utils.o)
 
 all: $(IMAGE)
@@ -98,7 +100,7 @@ all: $(IMAGE)
 CLEANFILES = $(IMAGE) $(OFILES) model.lds fdt.dtb
 
 $(IMAGE): $(OFILES) model.lds fdt.dtb $(KERNEL_IMAGE) $(FILESYSTEM)
-	$(LD) $(OFILES) -o $@ --script=model.lds
+	$(LD) $(LDFLAGS) $(OFILES) -o $@ --script=model.lds
 
 %.o: %.S Makefile
 	$(CC) $(CPPFLAGS) -D__ASSEMBLY__ $(CFLAGS) $(DEFINES) -c -o $@ $<
