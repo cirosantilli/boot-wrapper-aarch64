@@ -25,8 +25,8 @@ BOOTMETHOD	:= psci.o
 PSCI_NODE	:= psci {				\
 			compatible = \"arm,psci\";	\
 			method = \"smc\";		\
-			cpu_on = <0x84000002>;		\
-			cpu_off = <0x84000001>;		\
+			cpu_on = <0xc4000003>;		\
+			cpu_off = <0x84000002>;		\
 		   };
 CPU_NODES	:= $(shell $(top_srcdir)/gen-cpu-nodes.sh $(CPU_IDS))
 CPUS_NODE	:= cpus {		\

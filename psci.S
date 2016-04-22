@@ -8,8 +8,8 @@
  */
 #include "common.S"
 
-#define PSCI_CPU_OFF		0x84000001
-#define PSCI_CPU_ON		0x84000002
+#define PSCI_CPU_OFF		0x84000002
+#define PSCI_CPU_ON		0xc4000003
 
 #define PSCI_RET_SUCCESS	0
 #define PSCI_RET_NOT_IMPL	(-1)
