@@ -1,5 +1,5 @@
 /*
- * ns.c - code to initialise everything required when first booting.
+ * platform.c - code to initialise everything required when first booting.
  *
  * Copyright (C) 2015 ARM Limited. All rights reserved.
  *
@@ -45,7 +45,7 @@ static void print_string(const char *str)
 	}
 }
 
-void ns_init_system(void)
+void init_platform(void)
 {
 	/*
 	 * UART initialisation (38400 8N1)

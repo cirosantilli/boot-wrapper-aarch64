@@ -75,28 +75,18 @@ jump_kernel:
 	ldr	w0, flag_no_el3
 	cmp	w0, #0			// Prepare Z flag
 
-	b.ne	el2_trampoline		// No EL3
-
-	mov	x4, #SPSR_KERNEL
-	adr	x5, el2_trampoline
-	msr	elr_el3, x5
-	msr	spsr_el3, x4
-	eret
-
-el2_trampoline:
-	bl	flush_caches
-
-	cpuid	x0, x1
-	b.ne	1f
-	bl	ns_init_system
-
-	/* Load kernel parameters */
-1:	mov	x0, x20
+	mov	x0, x20
 	mov	x1, x21
 	mov	x2, x22
 	mov	x3, x23
 
-	br	x19
+	b.eq	1f
+	br	x19			// No EL3
+
+1:	mov	x4, #SPSR_KERNEL
+	msr	elr_el3, x19
+	msr	spsr_el3, x4
+	eret
 
 	.ltorg
 
