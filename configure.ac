@@ -40,6 +40,18 @@ AC_ARG_WITH([dtb],
 	AS_HELP_STRING([--with-dtb], [Specify a particular DTB to use]),
 	[KERN_DTB="$withval"])
 
+AC_ARG_WITH([xen],
+	AS_HELP_STRING([--with-xen], [Compile for Xen, and specify a particular Xen to use]),
+	X_IMAGE=$withval)
+
+AS_IF([test "x$X_IMAGE" == "x"], [],
+      [AS_IF([test ! -f "$X_IMAGE"],
+	     [AC_MSG_ERROR([Could not find Xen hypervisor binary: $X_IMAGE])]
+      )]
+)
+AC_SUBST([XEN_IMAGE], [$X_IMAGE])
+AM_CONDITIONAL([XEN], [test "x$X_IMAGE" != "x"])
+
 # Ensure that the user has provided us with a sane kernel dir.
 if ! test -d $KERN_DIR; then
 	AC_MSG_ERROR([Could not find Linux kernel dir: $KERN_DIR.])
@@ -63,6 +75,10 @@ fi
 
 AC_SUBST([KERNEL_IMAGE], [$KERN_IMAGE])
 AC_SUBST([KERNEL_DTB], [$KERN_DTB])
+AS_IF([test "x$X_IMAGE" != "x"],
+      [AC_SUBST([IMAGE], ["xen-system.axf"])],
+      [AC_SUBST([IMAGE], ["linux-system.axf"])]
+)
 
 # Allow a user to pass --enable-psci
 AC_ARG_ENABLE([psci],
@@ -132,4 +148,5 @@ echo "  CPU IDs:                           ${CPU_IDS}"
 echo "  Use GICv3?                         ${USE_GICV3}"
 echo "  Boot-wrapper execution state:      AArch${BOOTWRAPPER_ES}"
 echo "  Kernel execution state:            AArch${KERNEL_ES}"
+echo "  Xen image                          ${XEN_IMAGE:-NONE}"
 echo ""

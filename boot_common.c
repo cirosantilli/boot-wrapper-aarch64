@@ -9,7 +9,7 @@
 #include <cpu.h>
 #include <spin.h>
 
-extern unsigned long kernel;
+extern unsigned long entrypoint;
 extern unsigned long dtb;
 
 void init_platform(void);
@@ -67,7 +67,7 @@ void __noreturn first_spin(unsigned int cpu, unsigned long *mbox,
 	if (cpu == 0) {
 		init_platform();
 
-		*mbox = (unsigned long)&kernel;
+		*mbox = (unsigned long)&entrypoint;
 		sevl();
 		spin(mbox, invalid, 1);
 	} else {

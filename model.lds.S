@@ -16,6 +16,9 @@ OUTPUT_ARCH(aarch64)
 #endif
 TARGET(binary)
 
+#ifdef XEN
+INPUT(XEN)
+#endif
 INPUT(KERNEL)
 INPUT(./fdt.dtb)
 
@@ -35,6 +38,17 @@ SECTIONS
 		kernel = .;
 		KERNEL
 	}
+
+#ifdef XEN
+	.xen (PHYS_OFFSET + XEN_OFFSET): {
+		xen = .;
+		XEN
+	}
+
+	entrypoint = xen;
+#else
+	entrypoint = kernel;
+#endif
 
 	.dtb (PHYS_OFFSET + FDT_OFFSET): {
 		dtb = .;
