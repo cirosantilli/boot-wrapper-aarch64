@@ -111,6 +111,12 @@ AC_ARG_WITH([cmdline],
 	[C_CMDLINE=$withval])
 AC_SUBST([CMDLINE], [$C_CMDLINE])
 
+X_CMDLINE="console=dtuart dtuart=serial0 no-bootscrub"
+AC_ARG_WITH([xen-cmdline],
+	AS_HELP_STRING([--with-xen-cmdline], [set Xen command line]),
+	[X_CMDLINE=$withval])
+AC_SUBST([XEN_CMDLINE], [$X_CMDLINE])
+
 # Allow a user to pass --enable-gicv3
 AC_ARG_ENABLE([gicv3],
 	AS_HELP_STRING([--enable-gicv3], [enable GICv3 instead of GICv2]),
@@ -149,4 +155,7 @@ echo "  Use GICv3?                         ${USE_GICV3}"
 echo "  Boot-wrapper execution state:      AArch${BOOTWRAPPER_ES}"
 echo "  Kernel execution state:            AArch${KERNEL_ES}"
 echo "  Xen image                          ${XEN_IMAGE:-NONE}"
+if test "x${XEN_IMAGE}" != "x"; then
+echo "  Xen command line:                  ${XEN_CMDLINE}"
+fi
 echo ""

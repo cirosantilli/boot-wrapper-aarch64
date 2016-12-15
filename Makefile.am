@@ -96,21 +96,28 @@ FDT_OFFSET	:= 0x08000000
 if XEN
 XEN		:= -DXEN=$(XEN_IMAGE)
 XEN_OFFSET	:= 0x08200000
+KERNEL_SIZE	:= $(shell stat -Lc %s $(KERNEL_IMAGE) 2>/dev/null || echo 0)
+DOM0_OFFSET	:= $(shell echo $$(($(PHYS_OFFSET) + $(KERNEL_OFFSET))))
+XEN_CHOSEN	:= xen,xen-bootargs = \"$(XEN_CMDLINE)\";		\
+		   \#address-cells = <2>;				\
+		   \#size-cells = <2>;					\
+		   module@1 {						\
+			compatible = \"xen,linux-zimage\", \"xen,multiboot-module\"; \
+			reg = <0x0 $(DOM0_OFFSET) 0x0 $(KERNEL_SIZE)>;	\
+		   };
 endif
 
 if INITRD
 INITRD_FLAGS	:= -DUSE_INITRD
-CHOSEN_NODE	:= chosen {						\
-			bootargs = \"$(CMDLINE)\";			\
-			linux,initrd-start = <$(FILESYSTEM_START)>;	\
-			linux,initrd-end = <$(FILESYSTEM_END)>;		\
-		   };
-else
-INITRD_FLAGS	:=
-CHOSEN_NODE	:= chosen {						\
-			bootargs = \"$(CMDLINE)\";			\
-		   };
+INITRD_CHOSEN   := linux,initrd-start = <$(FILESYSTEM_START)>;	\
+		   linux,initrd-end = <$(FILESYSTEM_END)>;
 endif
+
+CHOSEN_NODE	:= chosen {						\
+			bootargs = \"$(CMDLINE)\";			\
+			$(INITRD_CHOSEN)				\
+			$(XEN_CHOSEN)					\
+		   };
 
 CPPFLAGS	+= $(INITRD_FLAGS)
 CFLAGS		+= -Iinclude/ -I$(ARCH_SRC)/include/
