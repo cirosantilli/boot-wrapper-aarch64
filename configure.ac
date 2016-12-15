@@ -105,7 +105,8 @@ AC_ARG_WITH([initrd],
 AC_SUBST([FILESYSTEM], [$USE_INITRD])
 AM_CONDITIONAL([INITRD], [test "x$USE_INITRD" != "x"])
 
-C_CMDLINE="console=ttyAMA0 earlyprintk=pl011,0x1c090000"
+AS_IF([test "x$X_IMAGE" = "x"],[C_CONSOLE="ttyAMA0"],[C_CONSOLE="hvc0"])
+C_CMDLINE="console=$C_CONSOLE earlyprintk=pl011,0x1c090000"
 AC_ARG_WITH([cmdline],
 	AS_HELP_STRING([--with-cmdline], [set a command line for the kernel]),
 	[C_CMDLINE=$withval])
