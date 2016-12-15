@@ -41,12 +41,25 @@ AC_ARG_WITH([dtb],
 	[KERN_DTB="$withval"])
 
 # Ensure that the user has provided us with a sane kernel dir.
-m4_define([CHECKFILES], [KERN_DIR,
-	KERN_DTB,
-	KERN_IMAGE])
+if ! test -d $KERN_DIR; then
+	AC_MSG_ERROR([Could not find Linux kernel dir: $KERN_DIR.])
+fi
 
-m4_foreach([checkfile], [CHECKFILES],
-	[AC_CHECK_FILE([$checkfile], [], AC_MSG_ERROR([No such file or directory: $checkfile]))])
+AC_MSG_CHECKING([whether DTB file exists])
+if ! test -f $KERN_DTB; then
+	AC_MSG_RESULT([no])
+	AC_MSG_ERROR([Could not find DTB file: $KERN_DTB])
+else
+	AC_MSG_RESULT([yes])
+fi
+
+AC_MSG_CHECKING([whether kernel image exists])
+if ! test -f $KERN_IMAGE; then
+	AC_MSG_RESULT([no])
+	AC_MSG_ERROR([Could not find kernel image: $KERN_IMAGE])
+else
+	AC_MSG_RESULT([yes])
+fi
 
 AC_SUBST([KERNEL_IMAGE], [$KERN_IMAGE])
 AC_SUBST([KERNEL_DTB], [$KERN_DTB])
