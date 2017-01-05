@@ -38,6 +38,16 @@ _start:
 1:	mov	x0, #0x30			// RES1
 	orr	x0, x0, #(1 << 0)		// Non-secure EL1
 	orr	x0, x0, #(1 << 8)		// HVC enable
+
+	/* Enable pointer authentication if present */
+	mrs	x1, id_aa64isar1_el1
+	ldr	x2, =(((0xff) << 24) | (0xff << 4))
+	and	x1, x1, x2
+	cbz	x1, 1f
+
+	orr	x0, x0, #(1 << 16)		// AP key enable
+	orr	x0, x0, #(1 << 17)		// AP insn enable
+1:
 #ifndef KERNEL_32
 	orr	x0, x0, #(1 << 10)		// 64-bit EL2
 #endif
