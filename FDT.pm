@@ -211,7 +211,7 @@ sub parse
 
 	for (;;) {
 		$child = FDT::Node->parse($fh, $header, $self);
-		last if (not $child);
+		last if (not defined($child));
 		push (@children, $child);
 	}
 
@@ -310,7 +310,7 @@ sub translate_address
 	my $parent = $self->{parent};
 
 	# root node require no translation
-	return $addr if (not $parent);
+	return $addr if (not defined($parent));
 
 	my $ranges = $self->get_property("ranges");
 	if (not defined($ranges)) {
@@ -364,7 +364,7 @@ sub get_translated_reg
 	my ($addr, $size) = $reg->read_cell_list($off, [$ac, $sc]);
 
 	for (my $parent = $self->{parent}; $parent; $parent = $parent->{parent}) {
-		last if (not $addr);
+		last if (not defined($addr));
 		$addr = $parent->translate_address($addr);
 	}
 
@@ -394,7 +394,7 @@ sub parse
 	if ($len != 0) {
 		$self->{data} = FDT::read_padded_data($fh, $len);
 	}
-	goto failed if ($len and not $self->{data});
+	goto failed if ($len and not defined($self->{data}));
 
 	$self->{len} = $len;
 
