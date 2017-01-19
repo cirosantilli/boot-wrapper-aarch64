@@ -278,6 +278,25 @@ sub find_by_device_type
 	return @found;
 }
 
+sub get_full_path
+{
+	my $self = shift;
+	my $cur = $self;
+	my @elems = ();
+
+	# root node
+	if (not defined($cur->{parent})) {
+		return '/';
+	}
+
+	while (defined($cur->{parent})) {
+		unshift @elems, $cur->{name};
+		unshift @elems, '/';
+		$cur = $cur->{parent};
+	}
+	return join ('', @elems);
+}
+
 sub get_property
 {
 	my $self = shift;
