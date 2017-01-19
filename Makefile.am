@@ -13,7 +13,8 @@ UART_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DT
 SYSREGS_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,vexpress-sysreg')
 CNTFRQ		:= 0x01800000	# 24Mhz
 
-NR_CPUS		:= $(shell echo $(CPU_IDS) | tr ',' ' ' | wc -w)
+CPU_IDS		:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findcpuids.pl $(KERNEL_DTB))
+NR_CPUS         := $(shell echo $(CPU_IDS) | tr ',' ' ' | wc -w)
 
 DEFINES		= -DCNTFRQ=$(CNTFRQ)
 DEFINES		+= -DCPU_IDS=$(CPU_IDS)
@@ -50,14 +51,11 @@ PSCI_NODE	:= psci {				\
 			cpu_on = <$(PSCI_CPU_ON)>;	\
 			cpu_off = <$(PSCI_CPU_OFF)>;	\
 		   };
-CPU_NODES	:= $(shell $(top_srcdir)/gen-cpu-nodes.sh $(CPU_IDS))
-CPUS_NODE	:= cpus {		\
-			$(CPU_NODES)	\
-		   };
+CPU_NODES	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/addpsci.pl $(KERNEL_DTB))
 else
 BOOTMETHOD	:= spin.o
 PSCI_NODE	:=
-CPUS_NODE	:=
+CPU_NODES	:=
 endif
 
 if GICV3
@@ -144,8 +142,8 @@ $(IMAGE): $(OFILES) model.lds fdt.dtb $(KERNEL_IMAGE) $(FILESYSTEM) $(XEN_IMAGE)
 model.lds: $(LD_SCRIPT) Makefile
 	$(CPP) $(CPPFLAGS) -ansi -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) $(XEN) -DXEN_OFFSET=$(XEN_OFFSET) -DKERNEL=$(KERNEL_IMAGE) -DFILESYSTEM=$(FILESYSTEM) -DTEXT_LIMIT=$(TEXT_LIMIT) -P -C -o $@ $<
 
-fdt.dtb: $(KERNEL_DTB) Makefile gen-cpu-nodes.sh
-	( $(DTC) -O dts -I dtb $(KERNEL_DTB) ; echo "/ { $(CHOSEN_NODE) $(PSCI_NODE) $(CPUS_NODE) };" ) | $(DTC) -O dtb -o $@ -
+fdt.dtb: $(KERNEL_DTB) Makefile
+	( $(DTC) -O dts -I dtb $(KERNEL_DTB) ; echo "/ { $(CHOSEN_NODE) $(PSCI_NODE) }; $(CPU_NODES)" ) | $(DTC) -O dtb -o $@ -
 
 # The filesystem archive might not exist if INITRD is not being used
 .PHONY: all clean $(FILESYSTEM)

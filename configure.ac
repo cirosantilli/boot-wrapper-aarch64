@@ -91,13 +91,6 @@ AS_IF([test "x$USE_PSCI" != "xyes" -a "x$KERNEL_ES" = "x32"],
 	[AC_MSG_ERROR([With an AArch32 kernel, boot method must be PSCI.])]
 )
 
-# Allow a user to pass --with-cpu-ids
-C_CPU_IDS="0x0,0x1,0x2,0x3"
-AC_ARG_WITH(cpu-ids,
-	AS_HELP_STRING([--with-cpu-ids], [Specify a comma seperated list of CPU IDs]),
-	[C_CPU_IDS="$withval"])
-AC_SUBST([CPU_IDS], [$C_CPU_IDS])
-
 # Allow a user to pass --with-initrd
 AC_ARG_WITH([initrd],
 	AS_HELP_STRING([--with-initrd], [embed an initrd in the kernel image]),
@@ -151,7 +144,6 @@ echo "  Device tree blob:                  ${KERN_DTB}"
 echo "  Linux kernel command line:         ${CMDLINE}"
 echo "  Embedded initrd:                   ${FILESYSTEM:-NONE}"
 echo "  Use PSCI?                          ${USE_PSCI}"
-echo "  CPU IDs:                           ${CPU_IDS}"
 echo "  Use GICv3?                         ${USE_GICV3}"
 echo "  Boot-wrapper execution state:      AArch${BOOTWRAPPER_ES}"
 echo "  Kernel execution state:            AArch${KERNEL_ES}"
