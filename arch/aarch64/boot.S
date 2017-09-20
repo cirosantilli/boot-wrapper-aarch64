@@ -45,6 +45,19 @@ _start:
 
 	msr	cptr_el3, xzr			// Disable copro. traps to EL3
 
+	mrs	x0, id_aa64pfr0_el1
+	ubfx	x0, x0, #32, #4			// SVE present?
+	cbz	x0, 1f				// Skip SVE init if not
+
+	mrs	x0, cptr_el3
+	orr	x0, x0, #CPTR_EL3_EZ		// enable SVE
+	msr	cptr_el3, x0
+	isb
+
+	mov	x0, #ZCR_EL3_LEN_MASK		// SVE: Enable full vector len
+	msr	ZCR_EL3, x0			// for EL2.
+
+1:
 	ldr	x0, =CNTFRQ
 	msr	cntfrq_el0, x0
 
