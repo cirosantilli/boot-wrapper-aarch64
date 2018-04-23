@@ -118,13 +118,19 @@ CHOSEN_NODE	:= chosen {						\
 		   };
 
 CPPFLAGS	+= $(INITRD_FLAGS)
-CFLAGS		+= -Iinclude/ -I$(ARCH_SRC)/include/
+CFLAGS		+= -I$(top_srcdir)/include/ -I$(top_srcdir)/$(ARCH_SRC)/include/
 CFLAGS		+= -Wall -fomit-frame-pointer
 CFLAGS		+= -ffunction-sections -fdata-sections
 LDFLAGS		+= --gc-sections
 
 OFILES		+= boot_common.o bakery_lock.o platform.o $(GIC) cache.o lib.o
 OFILES		+= $(addprefix $(ARCH_SRC),boot.o stack.o $(BOOTMETHOD) utils.o)
+
+# Don't lookup all prerequisites in $(top_srcdir), only the source files. When
+# building outside the source tree $(ARCH_SRC) needs to be created.
+VPATH		=
+vpath %.c $(top_srcdir)
+vpath %.S $(top_srcdir)
 
 all: $(IMAGE)
 
@@ -133,7 +139,10 @@ CLEANFILES = $(IMAGE) linux-system.axf xen-system.axf $(OFILES) model.lds fdt.dt
 $(IMAGE): $(OFILES) model.lds fdt.dtb $(KERNEL_IMAGE) $(FILESYSTEM) $(XEN_IMAGE)
 	$(LD) $(LDFLAGS) $(OFILES) -o $@ --script=model.lds
 
-%.o: %.S Makefile
+$(ARCH_SRC):
+	$(MKDIR_P) $@
+
+%.o: %.S Makefile | $(ARCH_SRC)
 	$(CC) $(CPPFLAGS) -D__ASSEMBLY__ $(CFLAGS) $(DEFINES) -c -o $@ $<
 
 %.o: %.c Makefile
