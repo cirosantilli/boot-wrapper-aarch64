@@ -76,5 +76,5 @@ SECTIONS
 		QUAD(0x0)
 	}
 
-	ASSERT(etext <= TEXT_LIMIT, ".text overflow!")
+	ASSERT(etext <= (PHYS_OFFSET + TEXT_LIMIT), ".text overflow!")
 }
